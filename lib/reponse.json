@@ -1,0 +1,82 @@
+{
+    "success": true,
+    "statusCode": 200,
+    "result": {
+        "inputTokens": [
+            {
+                "token": {
+                    "chainId": 59144,
+                    "address": "0xe5d7c2a44ffddf6b295a15c148167daaaf5cf34f",
+                    "name": "Bridged Wrapped Ether Linea",
+                    "symbol": "WETH",
+                    "decimals": 18,
+                    "logoURI": "https://coin-images.coingecko.com/coins/images/31019/large/download_%2817%29.png?1696529855",
+                    "icon": "https://coin-images.coingecko.com/coins/images/31019/large/download_%2817%29.png?1696529855",
+                    "chainAgnosticId": "string",
+                    "cgId": "string"
+                },
+                "amount": "string",
+                "chainId": 0,
+                "valueInUsd": 0,
+                "priceInUsd": 0
+            }
+        ],
+        "outputTokens": [
+            {
+                "token": {
+                    "chainId": 59144,
+                    "address": "0xe5d7c2a44ffddf6b295a15c148167daaaf5cf34f",
+                    "name": "Bridged Wrapped Ether Linea",
+                    "symbol": "WETH",
+                    "decimals": 18,
+                    "logoURI": "https://coin-images.coingecko.com/coins/images/31019/large/download_%2817%29.png?1696529855",
+                    "icon": "https://coin-images.coingecko.com/coins/images/31019/large/download_%2817%29.png?1696529855",
+                    "chainAgnosticId": "string",
+                    "cgId": "string"
+                },
+                "minAmountOut": "string",
+                "promisedAmount": "string",
+                "fulfilledAmount": "string",
+                "chainId": 0,
+                "minAmountOutInUsd": 0,
+                "fulfilValueInUsd": 0,
+                "priceInUsd": 0
+            }
+        ],
+        "orderTimestamp": "2024-07-29T15:51:28.071Z",
+        "status": "PENDING",
+        "statusCode": 0,
+        "requestHash": "string",
+        "ogSender": "string",
+        "requestSource": "string",
+        "userSignature": "string",
+        "requestType": "SINGLE_OUTPUT_REQUEST",
+        "request": {
+            "basicReq": {
+                "originChainId": 42161,
+                "destinationChainId": 10,
+                "deadline": 2060163137,
+                "nonce": "1744389040",
+                "sender": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+                "receiver": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+                "delegate": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+                "bungeeGateway": "0xcdea28ee7bd5bf7710b294d9391e1b6a318d809a",
+                "switchboardId": 1,
+                "inputToken": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+                "inputAmount": "10000000",
+                "outputToken": "0x0b2c639c533813f4aa9d7837caf62653d097ff85",
+                "minOutputAmount": "9893610",
+                "refuelAmount": "0"
+            },
+            "swapOutputToken": "0x0000000000000000000000000000000000000000",
+            "minSwapOutput": "0",
+            "metadata": "0x0000000000000000000000000000000000000000000000000000000000042069",
+            "affiliateFees": "0x",
+            "minDestGas": "0",
+            "destinationPayload": "0x",
+            "exclusiveTransmitter": "0x0000000000000000000000000000000000000000"
+        },
+        "createdAt": "2024-07-29T15:51:28.071Z",
+        "updatedAt": "2024-07-29T15:51:28.071Z"
+    }
+}
