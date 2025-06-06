@@ -1,0 +1,36 @@
+export const PUBLIC_RPC_URLS: Record<number, string[]> = {
+  1: [
+    "https://eth.public-rpc.com",
+    "https://rpc.ankr.com/eth",
+    "https://ethereum.publicnode.com",
+  ],
+  10: ["https://mainnet.optimism.io", "https://optimism.publicnode.com"],
+  56: [
+    "https://bsc-dataseed1.binance.org",
+    "https://bsc-dataseed2.binance.org",
+    "https://bsc-dataseed3.binance.org",
+  ],
+  100: [],
+  130: [],
+
+  137: [
+    "https://polygon-rpc.com",
+    "https://rpc.ankr.com/polygon",
+    "https://polygon.public-rpc.com",
+  ],
+  146: [],
+  324: ["https://mainnet.era.zksync.io", "https://zksync.meowrpc.com"],
+  1101: [],
+  1868: [],
+  2741: [],
+  5000: [],
+  8453: ["https://mainnet.base.org", "https://base.publicnode.com"],
+  34443: [],
+  42161: ["https://arb1.arbitrum.io/rpc", "https://arbitrum.public-rpc.com"],
+  57073: [],
+  57074: [],
+  80094: [],
+  81457: [],
+  89999: [],
+  534352: [],
+};

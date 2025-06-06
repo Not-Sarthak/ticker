@@ -17,7 +17,7 @@ interface SearchResponse {
   };
 }
 
-const BASE_URL = 'https://public-backend.bungee.exchange/api/v1';
+export const BASE_URL = 'https://public-backend.bungee.exchange/api/v1';
 
 class TokenApiService {
   async fetchChains(): Promise<Chain[]> {

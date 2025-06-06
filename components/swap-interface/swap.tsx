@@ -8,53 +8,68 @@ import { TokenDropdown } from "../token-dropdown";
 import { smoothEasing } from "@/lib/animation";
 import { TextAnimate } from "../text-animate";
 import { isValidEvmAddress } from "@/lib/utils";
+import { useTokenBalance } from "@/lib/hooks/use-token-balance";
+import { Shimmer } from "../ui/shimmer";
+import { useSwapStore } from "@/lib/store/swap-store";
+import { QuoteDisplay } from "./quote-display";
+import { useAccount } from "wagmi";
 
 const SwapUI: React.FC = () => {
-  const [fromToken, setFromToken] = useState<Token | null>(null);
-  const [toToken, setToToken] = useState<Token | null>(null);
-  const [fromAmount, setFromAmount] = useState<string>("");
-  const [toAmount, setToAmount] = useState<string>("");
-  const [balance, setBalance] = useState<number>(0);
-  const [conversionRate, setConversionRate] = useState<number>(2);
-  const [recipientAddress, setRecipientAddress] = useState<string>("");
   const [isHovered, setIsHovered] = useState(false);
-  const [showRecipientInput, setShowRecipientInput] = useState(false);
-  const [isValidAddress, setIsValidAddress] = useState<boolean>(true);
+  const { address } = useAccount();
+
+  const {
+    fromToken,
+    toToken,
+    fromAmount,
+    toAmount,
+    recipientAddress,
+    isValidAddress,
+    showRecipientInput,
+    setFromToken,
+    setToToken,
+    setFromAmount,
+    setToAmount,
+    setRecipientAddress,
+    setIsValidAddress,
+    setShowRecipientInput,
+    setUserAddress,
+    fetchQuote,
+    quoteData,
+  } = useSwapStore();
 
   useEffect(() => {
-    const fetchbalance = async () => {
-      try {
-        setBalance(100);
-      } catch (error) {
-        console.error("Failed to fetch SOL balance", error);
-      }
-    };
-    fetchbalance();
-  }, []);
+    if (address) {
+      setUserAddress(address);
+    }
+  }, [address, setUserAddress]);
+
+  const { balance: fromBalance, isLoading: isLoadingFromBalance } = useTokenBalance(fromToken);
+  const { balance: toBalance, isLoading: isLoadingToBalance } = useTokenBalance(toToken);
 
   const handleFromAmountChange = (value: string) => {
     setFromAmount(value);
-    const numeric = parseFloat(value);
-    if (!isNaN(numeric)) {
-      setToAmount((numeric * conversionRate).toFixed(6));
-    } else {
-      setToAmount("");
+    setToAmount("");
+  };
+
+  useEffect(() => {
+    if (quoteData?.output) {
+      const outputAmount = (parseFloat(quoteData.output.amount) / Math.pow(10, quoteData.output.token.decimals)).toFixed(6);
+      setToAmount(outputAmount);
+    }
+  }, [quoteData]);
+
+  const handleMaxClick = () => {
+    if (fromBalance) {
+      setFromAmount(fromBalance.formatted);
     }
   };
 
-  const handleMaxClick = () => {
-    const max = balance;
-    setFromAmount(max.toString());
-    setToAmount((max * conversionRate).toFixed(6));
-  };
-
   const handleSwapTokens = () => {
-    // Swap tokens
     const tempToken = fromToken;
     setFromToken(toToken);
     setToToken(tempToken);
 
-    // Swap amounts and recalculate
     const tempAmount = fromAmount;
     setFromAmount(toAmount);
     setToAmount(tempAmount);
@@ -74,6 +89,27 @@ const SwapUI: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    if (fromToken && toToken && fromAmount) {
+      fetchQuote();
+    }
+  }, [fromToken, toToken, fromAmount, recipientAddress]);
+
+  const BalanceDisplay = ({ balance, isLoading }: { balance: { formatted: string } | null, isLoading: boolean }) => {
+    if (isLoading) {
+      return <Shimmer className="w-24 h-5" />;
+    }
+    return (
+      <span className="text-gray-400" style={{ fontFamily: "Roboto Mono, monospace" }}>
+        Bal:<span className="text-white">{balance ? balance.formatted : "0.00"}</span>
+      </span>
+    );
+  };
+
+  const hasInsufficientBalance = fromBalance && fromAmount ? 
+    parseFloat(fromAmount) > parseFloat(fromBalance.formatted)
+    : false;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -87,7 +123,6 @@ const SwapUI: React.FC = () => {
         transition={{ delay: 0.2, duration: 0.5, ease: smoothEasing }}
         className="bg-[#171a1b] rounded-2xl px-4 py-4 shadow-sm border-[2px] border-[#1e2024] relative"
       >
-        {/* Modal Content */}
         <div className="relative">
           <div className="[font-family:var(--font-bricolage)] text-xl pb-6 font-semibold text-white tracking-wider">
             Swap
@@ -115,25 +150,21 @@ const SwapUI: React.FC = () => {
                   </motion.div>
                 </div>
                 <div className="flex mt-2 justify-end items-center space-x-1 text-sm">
-                  <span
-                    className="text-gray-400"
-                    style={{ fontFamily: "Roboto Mono, monospace" }}
-                  >
-                    Bal:<span className="text-white">{balance}</span>
-                  </span>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                    onClick={handleMaxClick}
-                    className="px-2 cursor-pointer hover:scale-95 duration-300 py-0.5 text-[#debb84] bg-[#262420] rounded-lg"
-                    style={{ fontFamily: "Roboto Mono, monospace" }}
-                  >
-                    MAX
-                  </motion.button>
+                  <BalanceDisplay balance={fromBalance} isLoading={isLoadingFromBalance} />
+                  {fromBalance && (
+                    <motion.button
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
+                      onClick={handleMaxClick}
+                      className="px-2 cursor-pointer hover:scale-95 duration-300 py-0.5 text-[#debb84] bg-[#262420] rounded-lg"
+                      style={{ fontFamily: "Roboto Mono, monospace" }}
+                    >
+                      MAX
+                    </motion.button>
+                  )}
                 </div>
               </div>
 
-              {/* Divider */}
               <div className="relative flex flex-col items-center">
                 <div className="w-full h-[1px] bg-[#242623] my-4"></div>
                 <motion.div
@@ -180,12 +211,7 @@ const SwapUI: React.FC = () => {
                       onSelect={setToToken}
                     />
                     <div className="flex mt-2 justify-end items-center space-x-1 text-sm">
-                      <span
-                        className="text-gray-400"
-                        style={{ fontFamily: "Roboto Mono, monospace" }}
-                      >
-                        Bal:<span className="text-white">{balance}</span>
-                      </span>
+                      <BalanceDisplay balance={toBalance} isLoading={isLoadingToBalance} />
                     </div>
                   </motion.div>
                 </div>
@@ -240,6 +266,8 @@ const SwapUI: React.FC = () => {
             </div>
           </div>
 
+          <QuoteDisplay />
+
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -247,10 +275,15 @@ const SwapUI: React.FC = () => {
             className="py-4"
           >
             <button
-              disabled={!fromAmount || !fromToken || !toToken}
+              disabled={!fromAmount || !fromToken || !toToken || hasInsufficientBalance}
               className="w-full text-base font-medium py-3 cursor-pointer hover:scale-95 duration-300 rounded-xl transition-all bg-[#1e2024] text-[#9ca3af] disabled:opacity-50"
             >
-              {fromAmount ? "Swap" : "Enter an Amount"}
+              {!fromAmount 
+                ? "Enter an Amount" 
+                : hasInsufficientBalance 
+                  ? "Insufficient Balance"
+                  : "Swap"
+              }
             </button>
           </motion.div>
         </div>

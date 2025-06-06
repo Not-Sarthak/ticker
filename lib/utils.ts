@@ -10,7 +10,6 @@ export function trimAddress(address: string) {
   return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
-// Token utility functions
 export function formatTokenBalance(balance: string | number, decimals: number = 4): string {
   const numBalance = typeof balance === 'string' ? parseFloat(balance) : balance;
   if (isNaN(numBalance)) return '0';
@@ -28,18 +27,14 @@ export function getTokenDisplayName(symbol: string, name: string): { primary: st
   };
 }
 
-// Image fallback utilities
 export function getImageWithFallback(src: string, fallback: string = '/placeholder-token.png'): string {
   return src || fallback;
 }
 
-// Error handling utilities
 export function handleApiError(error: unknown, context: string): void {
   console.error(`${context}:`, error);
-  // You can extend this to integrate with error reporting services
 }
 
-// Debounce utility
 export function debounce<T extends (...args: any[]) => any>(
   func: T,
   wait: number
@@ -63,8 +58,15 @@ export async function copyToClipboard(text: string): Promise<boolean> {
   try {
     await navigator.clipboard.writeText(text);
     return true;
-  } catch (err) {
-    console.error('Failed to copy text:', err);
+  } catch {
     return false;
   }
 }
+
+export const ERC20_ABI = [{
+  "constant": true,
+  "inputs": [{"name": "_owner", "type": "address"}],
+  "name": "balanceOf",
+  "outputs": [{"name": "balance", "type": "uint256"}],
+  "type": "function"
+}] as const;

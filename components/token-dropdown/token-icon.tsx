@@ -38,7 +38,7 @@ export const TokenIcon = memo<TokenIconProps>(({
         className={`w-${tokenSize/4} h-${tokenSize/4} rounded-full transition-transform group-hover:scale-105`}
         onError={(e) => {
           const target = e.target as HTMLImageElement;
-          target.src = '/placeholder-token.png';
+          target.src = '';
         }}
         width={tokenSize}
         height={tokenSize}
@@ -51,7 +51,7 @@ export const TokenIcon = memo<TokenIconProps>(({
           style={{ width: chainSize, height: chainSize }}
           onError={(e) => {
             const target = e.target as HTMLImageElement;
-            target.src = '/placeholder-chain.png';
+            target.src = '';
           }}
           width={chainSize}
           height={chainSize}
