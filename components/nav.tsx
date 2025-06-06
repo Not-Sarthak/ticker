@@ -9,18 +9,21 @@ const Nav = () => {
     >
       <a href="/" className="w-fit text-white flex items-center gap-2 group">
         <Image src="/splash.png" alt="Ticker" width={40} height={40} />
-        <span 
-          style={{
-            fontFamily: 'var(--font-pacifico)',
-            color: '#ffd698',
-            fontSize: '1.5rem',
-            transition: 'all 0.3s ease',
-            transform: 'scale(1) rotate(0deg)'
-          }}
-          className="group-hover:[transform:scale(1.1)_rotate(2deg)]"
-        >
-          Ticker
-        </span>
+        <div className="flex flex-col">
+          <div
+            style={{
+              fontFamily: "var(--font-pacifico)",
+              color: "#ffd698",
+              fontSize: "1.5rem",
+              transition: "all 0.3s ease",
+              transform: "scale(1) rotate(0deg)",
+            }}
+            className="group-hover:[transform:scale(1.1)_rotate(2deg)]"
+          >
+            Ticker
+          </div>
+          <div className="text-[10px] text-[#ffd698]">Powered by Bungee</div>
+        </div>
       </a>
       <div className="flex gap-4 items-center">
         <WalletConnector />
