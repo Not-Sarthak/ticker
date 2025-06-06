@@ -69,7 +69,6 @@ export const useSwapStore = create<SwapState>((set, get) => ({
     const state = get()
 
     const fromToken = state.fromToken as Token
-    console.log('From token:', fromToken)
     const toToken = state.toToken as Token
     const fromAmount = state.fromAmount
     const userAddress = state.userAddress as string
@@ -89,7 +88,6 @@ export const useSwapStore = create<SwapState>((set, get) => ({
     }
 
     try {
-      console.log('Requesting quote with params:', quoteParams)
       const quote = await getQuote(quoteParams)
       if (quote) {
         const formattedQuote: QuoteData = {

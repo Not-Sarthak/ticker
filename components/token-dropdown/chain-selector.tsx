@@ -75,10 +75,10 @@ const ExpandButton = memo<{
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
       <button
-        className="relative cursor-pointer flex items-center justify-center w-10 h-10 rounded-lg transition-all duration-200 bg-[#1E1E1E] hover:bg-[#2E2E2E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4B4B] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1E1E1E]"
-        title="More chains"
+        className="relative cursor-pointer flex items-center justify-center w-10 h-7 rounded-lg transition-all duration-200 bg-[#262420] hover:bg-[#2E2E2E] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF4B4B] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1E1E1E]"
+        title="More Chains"
       >
-        <span className="text-[#FF4B4B] font-medium text-lg">+</span>
+        <span className="text-[#ffd698] font-medium text-lg">+</span>
       </button>
     </DropdownMenuTrigger>
     <DropdownMenuContent

@@ -15,7 +15,7 @@ const bricolage = Bricolage_Grotesque({
 });
 
 export const metadata: Metadata = {
-  title: "Stonks",
+  title: "Ticker",
   description: "",
 };
 

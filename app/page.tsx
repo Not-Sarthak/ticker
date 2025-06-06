@@ -10,10 +10,10 @@ const frame = {
     title: "Launch Frame",
     action: {
       type: "launch_frame",
-      name: "Stonks",
+      name: "Ticker",
       url: appUrl,
       splashImageUrl: `${appUrl}/splash.png`,
-      splashBackgroundColor: "#f7f7f7",
+      splashBackgroundColor: "#1a1c1e",
     },
   },
 };
@@ -22,11 +22,11 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "Stonks",
+    title: "Ticker",
     openGraph: {
-      title: "Stonks",
+      title: "Ticker",
       description:
-        "Stonks",
+        "Ticker",
     },
     other: {
       "fc:frame": JSON.stringify(frame),
