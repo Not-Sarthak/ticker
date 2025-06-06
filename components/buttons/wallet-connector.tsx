@@ -25,10 +25,10 @@ export default function WalletConnector() {
   return (
     <>
       {authenticated && ready ? (
-        <div className="flex flex-row gap-2 rounded-full bg-[var(--button-color)]">
+        <div className="flex flex-row gap-1 rounded-full bg-[var(--button-color)]">
           <div 
             onClick={handleCopyAddress}
-            className="h-9 text-sm text-[var(--text-color)] flex items-center px-3 cursor-pointer hover:opacity-80 min-w-[100px] justify-center relative"
+            className="h-9 text-sm text-[var(--text-color)] flex items-center px-3 cursor-pointer hover:opacity-80 min-w-[80px] justify-center relative"
           >
             <AnimatePresence mode="wait">
               {showCheck ? (
@@ -55,7 +55,7 @@ export default function WalletConnector() {
           </div>
           <div className="w-[1px] my-2 border-l border-dotted border-[var(--text-color)] opacity-50" />
           <Button onClick={logout} className="cursor-pointer rounded-full">
-            Logout
+            Log Out
           </Button>
         </div>
       ) : (

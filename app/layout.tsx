@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Bricolage_Grotesque } from "next/font/google";
+import { Inter, Bricolage_Grotesque, Pacifico } from "next/font/google";
 import "./globals.css";
 import Providers from "./provider";
 
@@ -12,6 +12,13 @@ const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-bricolage",
+});
+
+const pacifico = Pacifico({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-pacifico",
 });
 
 export const metadata: Metadata = {
@@ -27,7 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.variable} ${bricolage.variable} antialiased`}
+        className={`${inter.variable} ${bricolage.variable} ${pacifico.variable} antialiased`}
       >
         <Providers>{children}</Providers>
       </body>
