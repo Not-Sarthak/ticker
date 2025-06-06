@@ -10,7 +10,7 @@ const frame = {
     title: "Launch Frame",
     action: {
       type: "launch_frame",
-      name: "vibe coding starter",
+      name: "Stonks",
       url: appUrl,
       splashImageUrl: `${appUrl}/splash.png`,
       splashBackgroundColor: "#f7f7f7",
@@ -22,11 +22,11 @@ export const revalidate = 300;
 
 export async function generateMetadata(): Promise<Metadata> {
   return {
-    title: "vibe-coding-starter",
+    title: "Stonks",
     openGraph: {
-      title: "vibe-coding-starter",
+      title: "Stonks",
       description:
-        "Starter project for Vibe Coding Farcaster Frames with Next.js",
+        "Stonks",
     },
     other: {
       "fc:frame": JSON.stringify(frame),

@@ -3,7 +3,8 @@
 import { useEffect, useState } from "react";
 import sdk from "@farcaster/frame-sdk";
 
-import WalletConnector from "./wallet-connector";
+import WalletConnector from "./buttons/wallet-connector";
+import SwapUI from "./swap-interface/swap";
 
 export default function App() {
   const [isSDKLoaded, setIsSDKLoaded] = useState(false);
@@ -21,9 +22,9 @@ export default function App() {
   }, [isSDKLoaded]);
 
   return (
-    <div>
-      <p>we vibe code</p>
+    <div className="min-h-screen bg-white">
       <WalletConnector />
+      <SwapUI />
     </div>
   );
 }
