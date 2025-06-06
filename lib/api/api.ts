@@ -1,4 +1,4 @@
-import { TokenListResponse, QuoteParams, TokenListResult, BridgeResponse, BridgeResult, SubmitRequest, SubmitRequestResponse } from "./types";
+import { TokenListResponse, QuoteParams, TokenListResult, BridgeResponse, BridgeResult, SubmitRequest, SubmitRequestResponse } from "../types";
 
 const BASE_URL = "https://public-backend.bungee.exchange";
 
