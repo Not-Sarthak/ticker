@@ -9,7 +9,7 @@ interface SearchInputProps {
 }
 
 export const SearchInput = memo<SearchInputProps>(({ 
-  placeholder = "Search tokens...",
+  placeholder = "Example: USDC Optimism",
   className = ""
 }) => {
   const { searchQuery, setSearchQuery } = useTokenStore();
@@ -21,7 +21,7 @@ export const SearchInput = memo<SearchInputProps>(({
   return (
     <div className={`relative ${className}`}>
       <svg 
-        className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" 
+        className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-[#ffffff]" 
         fill="currentColor" 
         viewBox="0 0 20 20"
       >
@@ -36,7 +36,7 @@ export const SearchInput = memo<SearchInputProps>(({
         placeholder={placeholder}
         value={searchQuery}
         onChange={handleInputChange}
-        className="w-full pl-12 pr-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 focus:border-blue-500/50 transition-all duration-200"
+        className="w-full pl-10 py-1 text-sm bg-[#262830] border border-[#2e2f34] rounded-lg text-white placeholder-[#ffffff] focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/30 transition-all duration-200"
       />
     </div>
   );

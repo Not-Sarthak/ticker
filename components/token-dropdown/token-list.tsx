@@ -10,14 +10,16 @@ interface TokenListProps {
   className?: string;
 }
 
-const LoadingSpinner = memo(() => (
-  <div className="p-8 text-center">
-    <div className="animate-spin rounded-full h-8 w-8 border-2 border-blue-500 border-t-transparent mx-auto"></div>
-    <div className="mt-3 text-sm text-gray-400">Loading tokens...</div>
+const ShimmerTokenItem = memo(() => (
+  <div className="p-4 flex items-center space-x-3 animate-pulse">
+    <div className="w-8 h-8 bg-gray-700 rounded-full"></div>
+    <div className="flex-1 space-y-2">
+      <div className="h-4 bg-gray-700 rounded w-24"></div>
+      <div className="h-3 bg-gray-700 rounded w-16"></div>
+    </div>
+    <div className="w-16 h-4 bg-gray-700 rounded"></div>
   </div>
 ));
-
-LoadingSpinner.displayName = 'LoadingSpinner';
 
 const EmptyState = memo<{ message: string }>(({ message }) => (
   <div className="p-8 text-center">
@@ -29,8 +31,6 @@ const EmptyState = memo<{ message: string }>(({ message }) => (
     <div className="text-gray-400 text-sm">{message}</div>
   </div>
 ));
-
-EmptyState.displayName = 'EmptyState';
 
 export const TokenList = memo<TokenListProps>(({ 
   onTokenSelect, 
@@ -48,9 +48,7 @@ export const TokenList = memo<TokenListProps>(({
     const isSearching = searchQuery.trim().length > 0;
     const tokensToShow = isSearching ? searchResults : tokens;
     
-    const message = isSearching 
-      ? 'No tokens found for your search' 
-      : 'No tokens available for this chain';
+    const message = "No Results Found"
 
     return {
       displayedTokens: tokensToShow,
@@ -76,7 +74,11 @@ export const TokenList = memo<TokenListProps>(({
   return (
     <div className={`max-h-80 overflow-y-auto ${className}`}>
       {loading ? (
-        <LoadingSpinner />
+        <div className="divide-y divide-gray-800/50">
+          {[...Array(5)].map((_, index) => (
+            <ShimmerTokenItem key={index} />
+          ))}
+        </div>
       ) : displayedTokens.length > 0 ? (
         <div className="divide-y divide-gray-800/50">
           {tokenListItems}
@@ -87,5 +89,3 @@ export const TokenList = memo<TokenListProps>(({
     </div>
   );
 });
-
-TokenList.displayName = 'TokenList'; 

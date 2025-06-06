@@ -1,10 +1,5 @@
 import { Chain, Token } from '@/types';
 
-interface ApiResponse<T> {
-  success: boolean;
-  result: T;
-}
-
 interface ChainResponse {
   success: boolean;
   result: Chain[];
