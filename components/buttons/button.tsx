@@ -23,7 +23,7 @@ const buttonVariants = cva(
         icon: "p-2",
       },
     },
-    defaultVariants: {
+    defaultVariants: { 
       variant: "default",
       size: "default",
     },
