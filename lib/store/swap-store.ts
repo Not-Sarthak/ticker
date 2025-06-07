@@ -90,7 +90,6 @@ export const useSwapStore = create<SwapState>((set, get) => ({
     try {
       const quote = await getQuote(quoteParams)
       
-      // Check if we have a valid quote with autoRoute and output
       if (quote && quote.autoRoute?.output) {
         const formattedQuote: QuoteData = {
           ...quote,
@@ -103,7 +102,6 @@ export const useSwapStore = create<SwapState>((set, get) => ({
         }
         set({ quoteData: formattedQuote })
       } else {
-        // If no autoRoute or output, set a partial quote without output
         const partialQuote: QuoteData = {
           ...quote,
           input: {

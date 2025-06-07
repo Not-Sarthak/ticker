@@ -61,8 +61,6 @@ const LoadingState = () => (
 
 export const QuoteDisplay = () => {
   const { quoteData, quoteLoading, fromToken, toToken, fromAmount } = useSwapStore();
-
-  // Don't show anything if we haven't tried to get a quote yet
   if (!fromToken || !toToken || !fromAmount) {
     return null;
   }
@@ -71,12 +69,10 @@ export const QuoteDisplay = () => {
     return <LoadingState />;
   }
 
-  // Only show no routes message if we've tried to get a quote and it failed
   if (quoteData && !quoteData.output && fromAmount !== '') {
     return <NoRoutesMessage />;
   }
 
-  // Don't show anything if we don't have quote data yet
   if (!quoteData?.output) {
     return null;
   }

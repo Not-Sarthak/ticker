@@ -1,5 +1,5 @@
 import { useEffect, useCallback } from 'react';
-import { useTokenStore } from '@/lib/stores/token-store';
+import { useTokenStore } from '@/lib/store/token-store';
 
 interface UseDebounceSearchProps {
   userAddress?: string;

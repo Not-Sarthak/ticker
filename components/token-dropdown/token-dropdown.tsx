@@ -2,7 +2,7 @@
 
 import React, { memo, useEffect, useCallback, useState } from "react";
 import { Token } from "@/types";
-import { useTokenStore } from "@/lib/stores/token-store";
+import { useTokenStore } from "@/lib/store/token-store";
 import { useDebouncedSearch } from "@/lib/hooks/use-debounced-search";
 import { SearchInput } from "./search-input";
 import { ChainSelector } from "./chain-selector";

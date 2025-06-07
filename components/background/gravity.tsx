@@ -157,7 +157,6 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
 
     const isRunning = useRef(false)
 
-    // Register Matter.js body in the physics world
     const registerElement = useCallback(
       (id: string, element: HTMLElement, props: MatterBodyProps) => {
         if (!canvas.current) return
@@ -214,7 +213,6 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
         }
 
         if (body) {
-          // Add some initial random velocity to make sure bodies are moving
           Body.setVelocity(body, { 
             x: (Math.random() - 0.5) * 2, 
             y: (Math.random() - 0.5) * 2 
@@ -226,8 +224,6 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
       },
       [debug]
     )
-
-    // Unregister Matter.js body from the physics world
     const unregisterElement = useCallback((id: string) => {
       const body = bodiesMap.current.get(id)
       if (body) {
@@ -236,7 +232,6 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
       }
     }, [])
 
-    // Keep react elements in sync with the physics world
     const updateElements = useCallback(() => {
       bodiesMap.current.forEach(({ element, body }) => {
         const { x, y } = body.position
@@ -250,7 +245,6 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
       frameId.current = requestAnimationFrame(updateElements)
     }, [])
 
-    // Apply repulsive force to bodies near the mouse cursor
     const applyRepulsiveForce = useCallback(() => {
       if (!mouse.current) return
 
@@ -262,18 +256,14 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
         const distance = Vector.magnitude(Vector.sub(body.position, mousePos))
         
         if (distance < repulsionRadius && distance > 0) {
-          // Calculate repulsive force direction (away from mouse)
           const direction = Vector.normalise(Vector.sub(body.position, mousePos))
           
-          // Calculate force magnitude based on distance (closer = stronger force)
           const forceMagnitude = repulsionStrength * (repulsionRadius - distance) / distance
           
-          // Apply the force
           const force = Vector.mult(direction, forceMagnitude)
           Body.applyForce(body, body.position, force)
         }
         
-        // Add small random forces to keep bodies moving
         const randomForce = {
           x: (Math.random() - 0.5) * 0.0001,
           y: (Math.random() - 0.5) * 0.0001
@@ -306,7 +296,6 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
 
       mouse.current = Mouse.create(render.current.canvas)
 
-      // Track mouse position for repulsion - use canvas mouse events
       render.current.canvas.addEventListener('mousemove', (event) => {
         const rect = render.current!.canvas.getBoundingClientRect()
         mousePosition.current = { 
@@ -315,14 +304,11 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
         }
       })
 
-      // Apply repulsive forces before each update
       Events.on(engine.current, 'beforeUpdate', () => {
         applyRepulsiveForce()
       })
 
-      // Add walls
       const walls = [
-        // Floor
         Bodies.rectangle(width / 2, height + 10, width, 20, {
           isStatic: true,
           friction: 1,
@@ -331,7 +317,6 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
           },
         }),
 
-        // Right wall
         Bodies.rectangle(width + 10, height / 2, 20, height, {
           isStatic: true,
           friction: 1,
@@ -340,7 +325,6 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
           },
         }),
 
-        // Left wall
         Bodies.rectangle(-10, height / 2, 20, height, {
           isStatic: true,
           friction: 1,
@@ -379,7 +363,6 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
       }
     }, [updateElements, debug, autoStart, applyRepulsiveForce])
 
-    // Clear the Matter.js world
     const clearRenderer = useCallback(() => {
       if (frameId.current) {
         cancelAnimationFrame(frameId.current)
@@ -411,7 +394,6 @@ const Gravity = forwardRef<GravityRef, GravityProps>(
 
       setCanvasSize({ width: newWidth, height: newHeight })
 
-      // Clear and reinitialize
       clearRenderer()
       initializeRenderer()
     }, [clearRenderer, initializeRenderer, resetOnResize])

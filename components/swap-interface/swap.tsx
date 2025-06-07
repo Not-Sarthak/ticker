@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Wallet } from "lucide-react";
+import { ChevronDown, Wallet, ExternalLink } from "lucide-react";
 import { Token } from "@/types";
 import { TokenDropdown } from "../token-dropdown";
 import { smoothEasing } from "@/lib/animation";
@@ -12,11 +12,15 @@ import { useTokenBalance } from "@/lib/hooks/use-token-balance";
 import { Shimmer } from "../ui/shimmer";
 import { useSwapStore } from "@/lib/store/swap-store";
 import { QuoteDisplay } from "./quote-display";
-import { useAccount } from "wagmi";
+import { useAccount, useWalletClient, usePublicClient } from "wagmi";
+import { useBridgeStore } from "@/lib/store/bridge-store";
+import { Button } from "../buttons/button";
 
 const SwapUI: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
-  const { address } = useAccount();
+  const { address, connector } = useAccount();
+  const { data: walletClient } = useWalletClient();
+  const publicClient = usePublicClient();
 
   const {
     fromToken,
@@ -38,14 +42,24 @@ const SwapUI: React.FC = () => {
     quoteData,
   } = useSwapStore();
 
+  const {
+    handleBridge,
+    isBridging,
+    bridgeStatus,
+    error: bridgeError,
+    requestHash,
+  } = useBridgeStore();
+
   useEffect(() => {
     if (address) {
       setUserAddress(address);
     }
   }, [address, setUserAddress]);
 
-  const { balance: fromBalance, isLoading: isLoadingFromBalance } = useTokenBalance(fromToken);
-  const { balance: toBalance, isLoading: isLoadingToBalance } = useTokenBalance(toToken);
+  const { balance: fromBalance, isLoading: isLoadingFromBalance } =
+    useTokenBalance(fromToken);
+  const { balance: toBalance, isLoading: isLoadingToBalance } =
+    useTokenBalance(toToken);
 
   const handleFromAmountChange = (value: string) => {
     setFromAmount(value);
@@ -54,14 +68,17 @@ const SwapUI: React.FC = () => {
 
   useEffect(() => {
     if (quoteData?.output) {
-      const outputAmount = (parseFloat(quoteData.output.amount) / Math.pow(10, quoteData.output.token.decimals)).toFixed(6);
+      const outputAmount = (
+        parseFloat(quoteData.output.amount) /
+        Math.pow(10, quoteData.output.token.decimals)
+      ).toFixed(3);
       setToAmount(outputAmount);
     }
   }, [quoteData]);
 
   const handleMaxClick = () => {
     if (fromBalance) {
-      setFromAmount(fromBalance.formatted);
+      setFromAmount(parseFloat(fromBalance.formatted).toFixed(3));
     }
   };
 
@@ -95,20 +112,42 @@ const SwapUI: React.FC = () => {
     }
   }, [fromToken, toToken, fromAmount, recipientAddress]);
 
-  const BalanceDisplay = ({ balance, isLoading }: { balance: { formatted: string } | null, isLoading: boolean }) => {
+  const BalanceDisplay = ({
+    balance,
+    isLoading,
+  }: {
+    balance: { formatted: string } | null;
+    isLoading: boolean;
+  }) => {
     if (isLoading) {
       return <Shimmer className="w-24 h-5" />;
     }
     return (
-      <span className="text-gray-400" style={{ fontFamily: "Roboto Mono, monospace" }}>
-        Bal:<span className="text-white">{balance ? balance.formatted : "0.00"}</span>
+      <span
+        className="text-gray-400"
+        style={{ fontFamily: "Roboto Mono, monospace" }}
+      >
+        Bal:
+        <span className="text-white">
+          {balance ? Number(balance.formatted).toFixed(4) : "0.0000"}
+        </span>
       </span>
     );
   };
 
-  const hasInsufficientBalance = fromBalance && fromAmount ? 
-    parseFloat(fromAmount) > parseFloat(fromBalance.formatted)
-    : false;
+  const hasInsufficientBalance =
+    fromBalance && fromAmount
+      ? parseFloat(fromAmount) > parseFloat(fromBalance.formatted)
+      : false;
+
+  const handleSwapClick = async () => {
+    if (!walletClient || !publicClient || !quoteData?.autoRoute) {
+      console.error("Missing required data");
+      return;
+    }
+
+    await handleBridge(quoteData, walletClient, publicClient);
+  };
 
   return (
     <motion.div
@@ -151,7 +190,10 @@ const SwapUI: React.FC = () => {
                   </motion.div>
                 </div>
                 <div className="flex mt-2 justify-end items-center space-x-1 text-sm">
-                  <BalanceDisplay balance={fromBalance} isLoading={isLoadingFromBalance} />
+                  <BalanceDisplay
+                    balance={fromBalance}
+                    isLoading={isLoadingFromBalance}
+                  />
                   {fromBalance && (
                     <motion.button
                       whileHover={{ scale: 1.02 }}
@@ -213,7 +255,10 @@ const SwapUI: React.FC = () => {
                       defaultTab="featured"
                     />
                     <div className="flex mt-2 justify-end items-center space-x-1 text-sm">
-                      <BalanceDisplay balance={toBalance} isLoading={isLoadingToBalance} />
+                      <BalanceDisplay
+                        balance={toBalance}
+                        isLoading={isLoadingToBalance}
+                      />
                     </div>
                   </motion.div>
                 </div>
@@ -233,7 +278,9 @@ const SwapUI: React.FC = () => {
                           onChange={(e) => handleAddressChange(e.target.value)}
                           placeholder="Enter recipient address"
                           className={`w-full bg-[#262830] border ${
-                            isValidAddress ? "border-[#2e2f34]" : "border-red-500"
+                            isValidAddress
+                              ? "border-[#2e2f34]"
+                              : "border-red-500"
                           } rounded-lg px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/30 transition-all duration-200 pr-[80px]`}
                         />
                         <button
@@ -244,7 +291,9 @@ const SwapUI: React.FC = () => {
                         </button>
                       </div>
                       {!isValidAddress && recipientAddress && (
-                        <p className="text-red-500 text-xs mt-1">Invalid EVM Address Format!</p>
+                        <p className="text-red-500 text-xs mt-1">
+                          Invalid EVM Address Format!
+                        </p>
                       )}
                     </motion.div>
                   ) : (
@@ -276,17 +325,42 @@ const SwapUI: React.FC = () => {
             transition={{ delay: 0.4, duration: 0.5, ease: smoothEasing }}
             className="py-4"
           >
-            <button
-              disabled={!fromAmount || !fromToken || !toToken || hasInsufficientBalance}
-              className="w-full text-base font-medium py-3 cursor-pointer hover:scale-95 duration-300 rounded-xl transition-all bg-[#1e2024] text-[#9ca3af] disabled:opacity-50"
-            >
-              {!fromAmount 
-                ? "Enter an Amount" 
-                : hasInsufficientBalance 
+            {bridgeStatus === "completed" && requestHash ? (
+              <Button className="w-full">
+                <TextAnimate animation="fadeIn" by="text">
+                  Transaction Successfull
+                </TextAnimate>
+              </Button>
+            ) : (
+              <button
+                disabled={
+                  !fromAmount ||
+                  !fromToken ||
+                  !toToken ||
+                  hasInsufficientBalance ||
+                  isBridging
+                }
+                onClick={handleSwapClick}
+                className="w-full text-base font-medium py-3 cursor-pointer hover:scale-95 duration-300 rounded-xl transition-all bg-[#1e2024] text-[#9ca3af] disabled:opacity-50"
+              >
+                {!fromAmount
+                  ? "Enter an Amount"
+                  : hasInsufficientBalance
                   ? "Insufficient Balance"
-                  : "Swap"
-              }
-            </button>
+                  : isBridging
+                  ? bridgeStatus === "approving"
+                    ? "Approving..."
+                    : bridgeStatus === "signing"
+                    ? "Signing..."
+                    : bridgeStatus === "submitting"
+                    ? "Submitting..."
+                    : "Processing..."
+                  : "Swap"}
+              </button>
+            )}
+            {bridgeError && (
+              <p className="text-red-500 text-sm mt-2">{bridgeError}</p>
+            )}
           </motion.div>
         </div>
       </motion.div>

@@ -55,7 +55,6 @@ export const useTokenStore = create<TokenStore>((set, get) => ({
       const chains = await tokenApi.fetchChains();
       set({ chains });
       
-      // Set Ethereum as default
       const ethereum = chains.find((chain: Chain) => chain.chainId === 1);
       if (ethereum) {
         set({ selectedChain: ethereum });

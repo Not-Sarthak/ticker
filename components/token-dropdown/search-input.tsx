@@ -1,7 +1,7 @@
 "use client";
 
 import React, { memo } from 'react';
-import { useTokenStore } from '@/lib/stores/token-store';
+import { useTokenStore } from '@/lib/store/token-store';
 
 interface SearchInputProps {
   placeholder?: string;

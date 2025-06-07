@@ -2,7 +2,7 @@
 
 import React, { memo, useMemo } from 'react';
 import { Token } from '@/types';
-import { useTokenStore } from '@/lib/stores/token-store';
+import { useTokenStore } from '@/lib/store/token-store';
 import { TokenListItem } from './token-list-item';
 
 interface TokenListProps {

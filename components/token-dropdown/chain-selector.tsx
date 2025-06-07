@@ -2,7 +2,7 @@
 
 import React, { memo, useMemo } from 'react';
 import { Chain } from '@/types';
-import { useTokenStore } from '@/lib/stores/token-store';
+import { useTokenStore } from '@/lib/store/token-store';
 import Image from 'next/image';
 import { 
   DropdownMenu,
