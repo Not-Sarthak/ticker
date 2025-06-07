@@ -40,14 +40,10 @@ interface ButtonProps
 
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, asChild = false, onClick, ...props }, ref) => {
+  ({ className, variant, size, asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
-    const handleClick = async () => {
-      await sdk.haptics.impactOccurred("medium");
-    }
     return (
       <Comp
-        onClick={handleClick}
         ref={ref}
         className={cn(buttonVariants({ variant, size }), className)}
         {...props}
