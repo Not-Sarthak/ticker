@@ -25,7 +25,7 @@ interface FrameMetadata {
     };
 }
 
-const appUrl = process.env.NEXT_PUBLIC_URL;
+const appUrl = "https://ticker.megabyte0x.xyz";
 
 
 async function generateMetadata(): Promise<FrameMetadata> {
