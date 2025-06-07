@@ -47,6 +47,11 @@ async function generateMetadata(): Promise<FrameMetadata> {
             tags: ["crypto", "rwa", "swap", "bridge", "crosschain"],
             ogImageUrl: `${appUrl}/splash.png`,
             heroImageUrl: `${appUrl}/splash.png`,
+        },
+        accountAssociation: {
+            header: "eyJmaWQiOjE0NTgyLCJ0eXBlIjoiY3VzdG9keSIsImtleSI6IjB4RTc0NzUyQTZlQTgyOWJmMEY0N0Q4ODMzRjVjMEY5MDMwYWIyMTU1MyJ9",
+            payload: "eyJkb21haW4iOiJ0aWNrZXIubWVnYWJ5dGUweC54eXoifQ",
+            signature: "MHhlMjZiZmM3YzRmOTM0M2ZjNjFiNjNlODVkMDgyZWIyOThjZTg5MDU5ZTM5NTRiMzFiYjUwYzEwZDMwZmExZDJmMTdiYWFjNjgyZmE1ZmIzZjUxMzdjNmJjNDIzMTM4ZjJhMmJkOWZhMDJlZWNjYjZlZjZlN2M2NGRmYWU3OTUwZTFj"
         }
     }
     return metadata;
