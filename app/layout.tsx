@@ -28,7 +28,7 @@ export const metadata: Metadata = {
 
 const frame = {
   version: "next",
-  imageUrl: "https://ticker.megabyte0x.xyz/og.jpg",
+  imageUrl: "https://ticker.megabyte0x.xyz/og.png",
   button: {
     title: "Buy RWAs",
     action: {
