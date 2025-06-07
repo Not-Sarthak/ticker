@@ -26,6 +26,21 @@ export const metadata: Metadata = {
   description: "",
 };
 
+const frame = {
+  version: "next",
+  imageUrl: "https://ticker.megabyte0x.xyz/og.jpg",
+  button: {
+    title: "Buy RWAs",
+    action: {
+      type: "launch_frame",
+      url: "https://ticker.megabyte0x.xyz",
+      name: "Ticker",
+      splashImageUrl: "https://ticker.megabyte0x.xyz/splash.png",
+      splashBackgroundColor: "#ffd698"
+    }
+  }
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,6 +48,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <meta name="fc:frame" content={JSON.stringify(frame)} />
+      </head>
       <body
         className={`${inter.variable} ${bricolage.variable} ${pacifico.variable} antialiased`}
       >
