@@ -22,7 +22,7 @@ const Nav = () => {
           >
             Ticker
           </div>
-          <div className="text-[10px] text-[#ffd698]">Powered by Bungee</div>
+          <div className="hidden md:block text-[#ffd698] whitespace-nowrap md:text-[10px]">Powered by Bungee</div>
         </div>
       </a>
       <div className="flex gap-4 items-center">

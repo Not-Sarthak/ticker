@@ -1,39 +1,106 @@
 import { useSwapStore } from "@/lib/store/swap-store";
 import { Shimmer } from "../ui/shimmer";
-import { motion } from "framer-motion";
+
+interface Token {
+  chainId: number;
+  address: string;
+  name: string;
+  symbol: string;
+  decimals: number;
+  logoURI: string;
+  icon: string;
+}
+
+interface QuoteOutput {
+  token: Token;
+  amount: string;
+  priceInUsd: number;
+  valueInUsd: number;
+}
+
+interface QuoteInput {
+  token: Token;
+  amount: string;
+  priceInUsd: number;
+  valueInUsd: number;
+}
+
+interface AutoRoute {
+  output: QuoteOutput;
+}
+
+interface QuoteResult {
+  input: QuoteInput;
+  autoRoute: AutoRoute | null;
+}
+
+interface Quote {
+  success: boolean;
+  statusCode: number;
+  result: QuoteResult;
+}
+
+const NoRoutesMessage = () => (
+  <div className="flex flex-col space-y-2 mt-4">
+    <div className="flex items-center justify-between bg-[#1e2024] p-4 rounded-lg">
+      <div className="flex items-center space-x-2">
+        <span className="text-sm font-medium text-yellow-500">
+          No routes available for this swap
+        </span>
+      </div>
+    </div>
+  </div>
+);
+
+const LoadingState = () => (
+  <div className="flex flex-col space-y-2 mt-4">
+    <Shimmer className="h-8 w-full rounded-lg" />
+    <Shimmer className="h-6 w-3/4 rounded-lg" />
+  </div>
+);
 
 export const QuoteDisplay = () => {
-  const { quoteData, quoteLoading } = useSwapStore();
+  const { quoteData, quoteLoading, fromToken, toToken, fromAmount } = useSwapStore();
 
-  if (quoteLoading) {
-    return (
-      <div className="flex flex-col space-y-2 mt-4">
-        <Shimmer className="h-8 w-full rounded-lg" />
-        <Shimmer className="h-6 w-3/4 rounded-lg" />
-      </div>
-    );
+  // Don't show anything if we haven't tried to get a quote yet
+  if (!fromToken || !toToken || !fromAmount) {
+    return null;
   }
 
-  if (!quoteData) return null;
+  if (quoteLoading) {
+    return <LoadingState />;
+  }
 
-  const inputAmount = (parseFloat(quoteData.input.amount) / Math.pow(10, quoteData.input.token.decimals)).toFixed(6);
-  const outputAmount = (parseFloat(quoteData.output.amount) / Math.pow(10, quoteData.output.token.decimals)).toFixed(6);
+  // Only show no routes message if we've tried to get a quote and it failed
+  if (quoteData && !quoteData.output && fromAmount !== '') {
+    return <NoRoutesMessage />;
+  }
+
+  // Don't show anything if we don't have quote data yet
+  if (!quoteData?.output) {
+    return null;
+  }
+
+  const amount = quoteData.output.amount;
+  const decimals = quoteData.output.token.decimals;
+  const symbol = quoteData.output.token.symbol;
+  const usdValue = quoteData.input.valueInUsd;
+
+  const formattedAmount = (parseFloat(amount) / Math.pow(10, decimals)).toFixed(6);
+  const formattedUsd = usdValue.toFixed(2);
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="flex flex-col space-y-2 mt-4 text-white"
-    >
+    <div className="flex flex-col space-y-2 mt-4">
       <div className="flex items-center justify-between bg-[#1e2024] p-4 rounded-lg">
         <div className="flex items-center space-x-2">
-          <span className="text-sm font-medium">
-            {/* {inputAmount} {quoteData.input.token.symbol} ~  */}
-            {outputAmount} {quoteData.output.token.symbol}
+          <span className="text-sm font-medium text-white">
+            {formattedAmount} {symbol}
           </span>
-          <span className="text-gray-400">${quoteData.input.valueInUsd.toFixed(2)}</span>
+          <span className="text-gray-400">
+            ${formattedUsd}
+          </span>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
-}; 
+};

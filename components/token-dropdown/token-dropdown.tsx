@@ -1,6 +1,6 @@
 "use client";
 
-import React, { memo, useEffect, useMemo, useCallback, useState } from "react";
+import React, { memo, useEffect, useCallback, useState } from "react";
 import { Token } from "@/types";
 import { useTokenStore } from "@/lib/stores/token-store";
 import { useDebouncedSearch } from "@/lib/hooks/use-debounced-search";
@@ -8,6 +8,8 @@ import { SearchInput } from "./search-input";
 import { ChainSelector } from "./chain-selector";
 import { TokenList } from "./token-list";
 import { TokenIcon } from "./token-icon";
+import { stockTokens } from "@/lib/stock-config";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -20,6 +22,7 @@ interface TokenDropdownProps {
   userAddress?: string;
   className?: string;
   placeholder?: string;
+  defaultTab?: "featured" | "all";
 }
 
 const SelectedTokenDisplay = memo<{ token: Token }>(({ token }) => {
@@ -43,21 +46,16 @@ export const TokenDropdown = memo<TokenDropdownProps>(
     userAddress,
     className = "",
     placeholder = "Select Token",
+    defaultTab = "all"
   }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const { tokens, searchResults, searchQuery, fetchChains, reset } =
-      useTokenStore();
+    const { fetchChains, reset } = useTokenStore();
 
     useEffect(() => {
       fetchChains();
     }, [fetchChains]);
 
     useDebouncedSearch({ userAddress });
-
-    const displayedTokensCount = useMemo(() => {
-      const tokensToShow = searchQuery.trim() ? searchResults : tokens;
-      return tokensToShow.length;
-    }, [searchQuery, searchResults, tokens]);
 
     const handleTokenSelect = useCallback(
       (token: Token) => {
@@ -93,13 +91,30 @@ export const TokenDropdown = memo<TokenDropdownProps>(
           </button>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent className="w-[320px] cursor-pointer p-0 bg-[#1e2024] font-[var(--font-inter)] border border-[#2e2f34] rounded-xl shadow-xl max-h-[400px] overflow-hidden">
+        <DropdownMenuContent className="w-[320px] cursor-pointer p-0 bg-[#1e2024] font-[var(--font-inter)] border border-[#2e2f34] rounded-xl shadow-xl max-h-[400px]">
           <div className="p-4 pb-2 border-b border-[#2e2f34]">
             <SearchInput />
             <ChainSelector className="mt-2" />
           </div>
 
-          <TokenList onTokenSelect={handleTokenSelect} />
+          <Tabs defaultValue={defaultTab} className="w-full flex flex-col h-[calc(400px-100px)]">
+            <TabsList className="w-full flex p-2 bg-[#24262a] border-b border-[#2e2f34]">
+              <TabsTrigger value="featured" className="flex-1 hover:scale-95 transition-all duration-200 cursor-pointer">Featured</TabsTrigger>
+              <TabsTrigger value="all" className="flex-1 hover:scale-95 transition-all duration-200 cursor-pointer">All</TabsTrigger>
+            </TabsList>
+            <TabsContent value="featured" className="flex-1 overflow-y-auto">
+              <TokenList 
+                onTokenSelect={handleTokenSelect} 
+                tokens={stockTokens.map(token => ({
+                  ...token,
+                  address: token.tokenAddress
+                }))} 
+              />
+            </TabsContent>
+            <TabsContent value="all" className="flex-1 overflow-y-auto">
+              <TokenList onTokenSelect={handleTokenSelect} />
+            </TabsContent>
+          </Tabs>
         </DropdownMenuContent>
       </DropdownMenu>
     );

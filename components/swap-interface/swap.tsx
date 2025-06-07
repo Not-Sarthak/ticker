@@ -146,6 +146,7 @@ const SwapUI: React.FC = () => {
                     <TokenDropdown
                       selectedToken={fromToken}
                       onSelect={setFromToken}
+                      defaultTab="all"
                     />
                   </motion.div>
                 </div>
@@ -209,6 +210,7 @@ const SwapUI: React.FC = () => {
                     <TokenDropdown
                       selectedToken={toToken}
                       onSelect={setToToken}
+                      defaultTab="featured"
                     />
                     <div className="flex mt-2 justify-end items-center space-x-1 text-sm">
                       <BalanceDisplay balance={toBalance} isLoading={isLoadingToBalance} />

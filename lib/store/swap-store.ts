@@ -9,7 +9,7 @@ interface QuoteData {
     priceInUsd: number
     valueInUsd: number
   }
-  output: {
+  output?: {
     token: Token
     amount: string
     priceInUsd: number
@@ -89,7 +89,9 @@ export const useSwapStore = create<SwapState>((set, get) => ({
 
     try {
       const quote = await getQuote(quoteParams)
-      if (quote) {
+      
+      // Check if we have a valid quote with autoRoute and output
+      if (quote && quote.autoRoute?.output) {
         const formattedQuote: QuoteData = {
           ...quote,
           output: {
@@ -101,7 +103,24 @@ export const useSwapStore = create<SwapState>((set, get) => ({
         }
         set({ quoteData: formattedQuote })
       } else {
-        set({ quoteData: null })
+        // If no autoRoute or output, set a partial quote without output
+        const partialQuote: QuoteData = {
+          ...quote,
+          input: {
+            token: fromToken,
+            amount: amountInDecimals,
+            priceInUsd: quote?.input?.priceInUsd || 1,
+            valueInUsd: quote?.input?.valueInUsd || parseFloat(fromAmount)
+          },
+          originChainId: parseInt(fromToken.chainId.toString()),
+          destinationChainId: parseInt(toToken.chainId.toString()),
+          userAddress,
+          receiverAddress: state.recipientAddress || userAddress,
+          destinationExec: null,
+          autoRoute: null,
+          manualRoutes: []
+        }
+        set({ quoteData: partialQuote })
       }
     } catch (error) {
       console.error('Error fetching quote:', error)

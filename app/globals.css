@@ -8,7 +8,6 @@
   --button-color: #262420;
 }
 
-/* Remove number input spinners */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
   -webkit-appearance: none;
@@ -19,7 +18,6 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* Custom Scrollbar Styling */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -38,7 +36,6 @@ input[type="number"] {
   background: #3a3b41;
 }
 
-/* Firefox scrollbar styling */
 * {
   scrollbar-width: thin;
   scrollbar-color: #2e2f34 transparent;

@@ -1,8 +1,7 @@
 export const PUBLIC_RPC_URLS: Record<number, string[]> = {
   1: [
-    "https://eth.public-rpc.com",
-    "https://rpc.ankr.com/eth",
-    "https://ethereum.publicnode.com",
+    "https://eth-mainnet.public.blastapi.io",
+    "https://eth.llamarpc.com",
   ],
   10: ["https://mainnet.optimism.io", "https://optimism.publicnode.com"],
   56: [
@@ -24,7 +23,7 @@ export const PUBLIC_RPC_URLS: Record<number, string[]> = {
   1868: [],
   2741: [],
   5000: [],
-  8453: ["https://mainnet.base.org", "https://base.publicnode.com"],
+  8453: ["https://base.llamarpc.com"],
   34443: [],
   42161: ["https://arb1.arbitrum.io/rpc", "https://arbitrum.public-rpc.com"],
   57073: [],
