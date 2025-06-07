@@ -36,7 +36,7 @@ async function generateMetadata(): Promise<FrameMetadata> {
             name: "Ticker",
             iconUrl: `${appUrl}/splash.png`,
             tagline: "Get yourself some RWAs",
-            homeUrl: "ticker.megabyte0x.xyz",
+            homeUrl: `${appUrl}`,
             imageUrl: `${appUrl}/splash.png`,
             buttonTitle: "Launch Frame",
             splashImageUrl: `${appUrl}/splash.png`,
