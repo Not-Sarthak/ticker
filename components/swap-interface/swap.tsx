@@ -142,7 +142,7 @@ const SwapUI: React.FC = () => {
 
   const handleSwapClick = async () => {
     if (!walletClient || !publicClient || !quoteData?.autoRoute) {
-      console.error("Missing required data");
+      console.error("Missing Required Data");
       return;
     }
 
