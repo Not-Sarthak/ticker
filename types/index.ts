@@ -17,7 +17,7 @@ export type Chain = {
   isManualEnabled: boolean;
 };
 
-export type Token = {
+export interface Token {
   chainId: number;
   address: string;
   name: string;
@@ -26,10 +26,10 @@ export type Token = {
   logoURI: string;
   isShortListed?: boolean;
   tags?: string[];
-  trendingRank?: number;
-  marketCap?: number;
-  totalVolume?: number;
+  trendingRank?: number | null;
+  marketCap?: number | null;
+  totalVolume?: number | null;
   balance?: string;
   balanceInUsd?: number;
   isVerified?: boolean;
-};
+}

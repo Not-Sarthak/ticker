@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { Chain, Token } from '@/types';
 import { tokenApi } from '@/lib/api/token-api';
+import { getUserTokenList } from '@/lib/api/api';
 
 interface TokenStore {
   // State
@@ -23,7 +24,7 @@ interface TokenStore {
   
   // Async actions
   fetchChains: () => Promise<void>;
-  fetchTokens: (chainId: number) => Promise<void>;
+  fetchTokens: (chainId: number, userAddress?: string) => Promise<void>;
   searchTokens: (query: string, userAddress?: string) => Promise<void>;
   
   // Reset
@@ -65,13 +66,28 @@ export const useTokenStore = create<TokenStore>((set, get) => ({
     }
   },
   
-  fetchTokens: async (chainId: number) => {
+  fetchTokens: async (chainId: number, userAddress?: string) => {
     set({ loading: true });
     try {
+      if (userAddress) {
+        const result = await getUserTokenList(userAddress, [chainId.toString()]);
+        if (result && result[chainId] && Array.isArray(result[chainId])) {
+          // Sort tokens by balanceInUsd in descending order
+          const sortedTokens = [...result[chainId]].sort((a, b) => {
+            const balanceA = a.balanceInUsd || 0;
+            const balanceB = b.balanceInUsd || 0;
+            return balanceB - balanceA;
+          });
+          set({ tokens: sortedTokens });
+          return;
+        }
+      }
+      // Fallback to regular token list if no user address or getUserTokenList fails
       const tokens = await tokenApi.fetchTokens(chainId);
       set({ tokens });
     } catch (error) {
       console.error('Error fetching tokens:', error);
+      set({ tokens: [] }); // Set empty array on error
     } finally {
       set({ loading: false });
     }

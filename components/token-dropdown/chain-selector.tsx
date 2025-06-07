@@ -3,6 +3,7 @@
 import React, { memo, useMemo } from 'react';
 import { Chain } from '@/types';
 import { useTokenStore } from '@/lib/store/token-store';
+import { useAccount } from 'wagmi';
 import Image from 'next/image';
 import { 
   DropdownMenu,
@@ -110,6 +111,8 @@ export const ChainSelector = memo<ChainSelectorProps>(({
     reset
   } = useTokenStore();
 
+  const { address } = useAccount();
+
   const { displayedChains, remainingChains } = useMemo(() => ({
     displayedChains: chains.slice(0, maxVisible),
     remainingChains: chains.slice(maxVisible)
@@ -117,7 +120,7 @@ export const ChainSelector = memo<ChainSelectorProps>(({
 
   const handleChainSelect = (chain: Chain) => {
     setSelectedChain(chain);
-    fetchTokens(chain.chainId);
+    fetchTokens(chain.chainId, address);
     reset();
   };
 

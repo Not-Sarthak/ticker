@@ -4,6 +4,7 @@ import React, { memo, useEffect, useCallback, useState } from "react";
 import { Token } from "@/types";
 import { useTokenStore } from "@/lib/store/token-store";
 import { useDebouncedSearch } from "@/lib/hooks/use-debounced-search";
+import { useAccount } from 'wagmi';
 import { SearchInput } from "./search-input";
 import { ChainSelector } from "./chain-selector";
 import { TokenList } from "./token-list";
@@ -19,7 +20,6 @@ import {
 interface TokenDropdownProps {
   selectedToken: Token | null;
   onSelect: (token: Token) => void;
-  userAddress?: string;
   className?: string;
   placeholder?: string;
   defaultTab?: "featured" | "all";
@@ -43,19 +43,19 @@ export const TokenDropdown = memo<TokenDropdownProps>(
   ({
     selectedToken,
     onSelect,
-    userAddress,
     className = "",
     placeholder = "Select Token",
     defaultTab = "all"
   }) => {
     const [isOpen, setIsOpen] = useState(false);
     const { fetchChains, reset } = useTokenStore();
+    const { address } = useAccount();
 
     useEffect(() => {
       fetchChains();
     }, [fetchChains]);
 
-    useDebouncedSearch({ userAddress });
+    useDebouncedSearch({ userAddress: address });
 
     const handleTokenSelect = useCallback(
       (token: Token) => {
