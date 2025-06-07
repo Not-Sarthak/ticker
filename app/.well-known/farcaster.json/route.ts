@@ -1,38 +1,55 @@
 import { NextResponse } from 'next/server';
-import { Metadata } from "next";
+interface FrameMetadata {
+    accountAssociation?: {
+        header: string;
+        payload: string;
+        signature: string;
+    };
+    frame: {
+        version: string;
+        description: string;
+        name: string;
+        iconUrl: string;
+        tagline: string;
+        homeUrl: string;
+        imageUrl: string;
+        buttonTitle: string;
+        tags: string[];
+        splashImageUrl: string;
+        splashBackgroundColor: string;
+        primaryCategory: string;
+        ogTitle: string;
+        ogDescription: string;
+        ogImageUrl: string;
+        heroImageUrl: string;
+    };
+}
 
 const appUrl = process.env.NEXT_PUBLIC_URL;
 
-const frame = {
-    version: "1",
-    name: "Ticker",
-    homeUrl: "ticker.megabyte0x.xyz",
-    iconUrl: `${appUrl}/favicon.ico`,
-    splashImageUrl: `${appUrl}/splash.png`,
-    splashBackgroundColor: "#ffd698",
-    description: "Get yourself some RWAs",
-    primaryCategory: "finance",
-    tags: ["crypto", "rwa", "swap", "bridge", "crosschain"],
-    tagline: "Get yourself some RWAs",
-    ogTitle: "Ticker",
-    ogDescription: "Get yourself some RWAs",
-    ogImageUrl: `${appUrl}/splash.png`,
-};
 
-
-async function generateMetadata(): Promise<Metadata> {
-    return {
-        title: "Ticker",
-        openGraph: {
-            title: "Ticker",
-            description:
-                "Get yourself some RWAs",
-            images: [`${appUrl}/splash.png`],
-        },
-        other: {
-            "fc:frame": JSON.stringify(frame),
-        },
-    };
+async function generateMetadata(): Promise<FrameMetadata> {
+    const metadata: FrameMetadata = {
+        frame: {
+            version: "1",
+            description: "Get yourself some RWAs",
+            name: "Ticker",
+            iconUrl: `${appUrl}/favicon.ico`,
+            tagline: "Get yourself some RWAs",
+            homeUrl: "ticker.megabyte0x.xyz",
+            imageUrl: `${appUrl}/splash.png`,
+            buttonTitle: "Launch Frame",
+            splashImageUrl: `${appUrl}/splash.png`,
+            splashBackgroundColor: "#ffd698",
+            primaryCategory: "finance",
+            ogTitle: "Ticker",
+            ogDescription: "Get yourself some RWAs",
+            tags: ["crypto", "rwa", "swap", "bridge", "crosschain"],
+            ogImageUrl: `${appUrl}/splash.png`,
+            heroImageUrl: `${appUrl}/splash.png`,
+        }
+    }
+    return metadata;
 }
 
 export async function GET() {
