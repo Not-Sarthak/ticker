@@ -7,7 +7,7 @@ export const stockTokens = [
     symbol: "WBCOIN",
     decimals: 18,
     logoURI:
-      "https://assets.coingecko.com/coins/images/54428/large/bTSLA_200p.png?1740041458",
+      "https://etherscan.io/token/images/wbcoineth_32.png",
   },
   {
     id: 2,
@@ -138,7 +138,7 @@ export const stockTokens = [
     symbol: "WBCOIN",
     decimals: 18,
     logoURI:
-      "https://assets.coingecko.com/coins/images/54428/large/bTSLA_200p.png?1740041458",
+      "https://etherscan.io/token/images/wbcoineth_32.png",
   },
   {
     id: 16,
@@ -148,7 +148,7 @@ export const stockTokens = [
     symbol: "WBCOIN",
     decimals: 18,
     logoURI:
-      "https://assets.coingecko.com/coins/images/54428/large/bTSLA_200p.png?1740041458",
+      "https://etherscan.io/token/images/wbcoineth_32.png",
   },
   {
     id: 17,
@@ -158,7 +158,7 @@ export const stockTokens = [
     symbol: "WBCOIN",
     decimals: 18,
     logoURI:
-      "https://assets.coingecko.com/coins/images/54428/large/bTSLA_200p.png?1740041458",
+      "https://etherscan.io/token/images/wbcoineth_32.png",
   },
   {
     id: 18,
@@ -168,7 +168,7 @@ export const stockTokens = [
     symbol: "WBCOIN",
     decimals: 18,
     logoURI:
-      "https://assets.coingecko.com/coins/images/54428/large/bTSLA_200p.png?1740041458",
+      "https://etherscan.io/token/images/wbcoineth_32.png",
   },
   {
     id: 19,
