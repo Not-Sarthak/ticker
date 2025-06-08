@@ -15,9 +15,11 @@ import { useAccount, useWalletClient, usePublicClient } from "wagmi";
 import { useBridgeStore } from "@/lib/store/bridge-store";
 import { Button } from "../buttons/button";
 import { sdk } from '@farcaster/frame-sdk'
+import { getTxHash } from '@/lib/api/api';
 
 const SwapUI: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
+  const [txHash, setTxHash] = useState<string | null>(null);
   const { address, connector } = useAccount();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
@@ -71,14 +73,14 @@ const SwapUI: React.FC = () => {
       const outputAmount = (
         parseFloat(quoteData.output.amount) /
         Math.pow(10, quoteData.output.token.decimals)
-      ).toFixed(3);
+      ).toString();
       setToAmount(outputAmount);
     }
   }, [quoteData]);
 
   const handleMaxClick = () => {
     if (fromBalance) {
-      setFromAmount(parseFloat(fromBalance.formatted).toFixed(3));
+      setFromAmount(parseFloat(fromBalance.formatted).toString());
     }
   };
 
@@ -108,7 +110,7 @@ const SwapUI: React.FC = () => {
 
   const handleShareApp = async () => {
     await sdk.actions.composeCast({
-      text: "I just bought RWAs using Ticker by @0xsarthak and @megabyte. \n \n Powered by @bungee.",
+      text: "just bridged real world assets on ticker",
       embeds: [
         "https://ticker.megabyte0x.xyz"
       ]
@@ -120,6 +122,16 @@ const SwapUI: React.FC = () => {
       fetchQuote();
     }
   }, [fromToken, toToken, fromAmount, recipientAddress]);
+
+  useEffect(() => {
+    if (requestHash) {
+      const fetchTxHash = async () => {
+        const hash = await getTxHash(requestHash);
+        setTxHash(hash);
+      };
+      fetchTxHash();
+    }
+  }, [requestHash]);
 
   const BalanceDisplay = ({
     balance,
@@ -334,18 +346,28 @@ const SwapUI: React.FC = () => {
             className="py-4"
           >
             {bridgeStatus === "completed" && requestHash ? (
-              (
-                <div className="flex flex-col gap-2">
-                  <Button className="w-full">
+              <div className="flex flex-col gap-2">
+                {!txHash ? (
+                  <Button className="w-full cursor-pointer">
                     <TextAnimate animation="fadeIn" by="text">
-                      Transaction Successfull
+                      Transaction Successful
                     </TextAnimate>
                   </Button>
-                  <Button className="w-full" onClick={handleShareApp}>
-                    Share App
+                ) : (
+                  <Button 
+                    className="w-full cursor-pointer"
+                    onClick={() => {
+                      console.log("txHash", txHash);
+                      sdk.actions.openUrl(`https://www.socketscan.io/tx/${txHash}`);
+                    }}
+                  >
+                    View Transaction
                   </Button>
-                </div>
-              )
+                )}
+                <Button className="w-full cursor-pointer" onClick={handleShareApp}>
+                  Share App
+                </Button>
+              </div>
             ) : (
               <button
                 disabled={

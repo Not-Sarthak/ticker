@@ -166,7 +166,7 @@ async function submitRequest(quote: SubmitRequest): Promise<SubmitRequestResult 
   }
 }
 
-async function getTxHash(requestHash: string): Promise<string | null> {
+export async function getTxHash(requestHash: string): Promise<string | null> {
   const url = `${BASE_URL}/api/v1/bungee/status?requestHash=${requestHash}`;
 
   try {
