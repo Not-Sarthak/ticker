@@ -16,6 +16,7 @@ import { useBridgeStore } from "@/lib/store/bridge-store";
 import { Button } from "../buttons/button";
 import { sdk } from '@farcaster/frame-sdk'
 import { getTxHash } from '@/lib/api/api';
+import { useTokenPrice } from "@/lib/hooks/use-token-price";
 
 const SwapUI: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -51,6 +52,9 @@ const SwapUI: React.FC = () => {
     error: bridgeError,
     requestHash,
   } = useBridgeStore();
+
+  const fromTokenPrice = useTokenPrice(fromToken);
+  const toTokenPrice = useTokenPrice(toToken);
 
   useEffect(() => {
     if (address) {
@@ -193,16 +197,23 @@ const SwapUI: React.FC = () => {
             <div className="space-y-4">
               <div className="flex flex-col space-y-1 min-h-[80px]">
                 <div className="flex items-center justify-between">
-                  <motion.input
-                    whileFocus={{ scale: 1.01 }}
-                    type="number"
-                    value={fromAmount}
-                    onChange={(e) => handleFromAmountChange(e.target.value)}
-                    className="bg-transparent outline-none text-white text-2xl font-medium w-full placeholder-gray-400 [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none font-roboto-mono"
-                    style={{ fontFamily: "Roboto Mono, monospace" }}
-                    placeholder="0.00"
-                    min="0"
-                  />
+                  <div className="flex flex-col w-full">
+                    <motion.input
+                      whileFocus={{ scale: 1.01 }}
+                      type="number"
+                      value={fromAmount}
+                      onChange={(e) => handleFromAmountChange(e.target.value)}
+                      className="bg-transparent outline-none text-white text-2xl font-medium w-full placeholder-gray-400 [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none font-roboto-mono"
+                      style={{ fontFamily: "Roboto Mono, monospace" }}
+                      placeholder="0.00"
+                      min="0"
+                    />
+                    {fromTokenPrice && fromAmount && (
+                      <span className="text-xs text-white mt-1">
+                        ${(fromTokenPrice * parseFloat(fromAmount || "0")).toFixed(2)}
+                      </span>
+                    )}
+                  </div>
                   <motion.div whileHover={{ scale: 1.01 }}>
                     <TokenDropdown
                       selectedToken={fromToken}
@@ -262,14 +273,21 @@ const SwapUI: React.FC = () => {
 
               <div className="flex flex-col space-y-1 min-h-[80px]">
                 <div className="flex items-start justify-between">
-                  <motion.input
-                    type="number"
-                    value={toAmount}
-                    className="bg-transparent outline-none text-white text-2xl font-medium w-full placeholder-gray-400 [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none font-roboto-mono"
-                    style={{ fontFamily: "Roboto Mono, monospace" }}
-                    placeholder="0.00"
-                    readOnly
-                  />
+                  <div className="flex flex-col w-full">
+                    <motion.input
+                      type="number"
+                      value={toAmount}
+                      className="bg-transparent outline-none text-white text-2xl font-medium w-full placeholder-gray-400 [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none font-roboto-mono"
+                      style={{ fontFamily: "Roboto Mono, monospace" }}
+                      placeholder="0.00"
+                      readOnly
+                    />
+                    {toTokenPrice && toAmount && (
+                      <span className="text-xs text-white mt-1">
+                        ${(toTokenPrice * parseFloat(toAmount || "0")).toFixed(2)}
+                      </span>
+                    )}
+                  </div>
                   <motion.div whileHover={{ scale: 1.01 }}>
                     <TokenDropdown
                       selectedToken={toToken}

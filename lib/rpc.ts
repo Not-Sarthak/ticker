@@ -33,3 +33,33 @@ export const PUBLIC_RPC_URLS: Record<number, string[]> = {
   89999: [],
   534352: [],
 };
+
+export const MAINNET_CHAIN_IDS = {
+  ETHEREUM: 1,
+  BASE: 8453,
+  ARBITRUM: 42161,
+  ARBITRUM_NOVA: 42170,
+  OPTIMISM: 10,
+  POLYGON: 137,
+  WORLDCHAIN: 480,
+  UNICHAIN: 130,
+  SONEIUM: 1868,
+  POLYNOMIAL: 8008,
+  OPBNB: 204,
+  BERACHAIN: 80094,
+} as const;
+
+export const ALCHEMY_NETWORK_DETAILS: Record<number, string> = {
+  [MAINNET_CHAIN_IDS.ETHEREUM]: "eth-mainnet",
+  [MAINNET_CHAIN_IDS.BASE]: "base-mainnet",
+  [MAINNET_CHAIN_IDS.ARBITRUM]: "arb-mainnet",
+  [MAINNET_CHAIN_IDS.ARBITRUM_NOVA]: "arbnova-mainnet",
+  [MAINNET_CHAIN_IDS.OPTIMISM]: "opt-mainnet",
+  [MAINNET_CHAIN_IDS.POLYGON]: "polygon-mainnet",
+  [MAINNET_CHAIN_IDS.WORLDCHAIN]: "worldchain-mainnet",
+  [MAINNET_CHAIN_IDS.UNICHAIN]: "unichain-mainnet",
+  [MAINNET_CHAIN_IDS.SONEIUM]: "soneium-mainnet",
+  [MAINNET_CHAIN_IDS.POLYNOMIAL]: "polynomial-mainnet",
+  [MAINNET_CHAIN_IDS.OPBNB]: "opbnb-mainnet",
+  [MAINNET_CHAIN_IDS.BERACHAIN]: "berachain-mainnet",
+};
