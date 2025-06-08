@@ -2,8 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronDown, Wallet, ExternalLink } from "lucide-react";
-import { Token } from "@/types";
+import { ChevronDown, Wallet } from "lucide-react";
 import { TokenDropdown } from "../token-dropdown";
 import { smoothEasing } from "@/lib/animation";
 import { TextAnimate } from "../text-animate";
@@ -15,6 +14,7 @@ import { QuoteDisplay } from "./quote-display";
 import { useAccount, useWalletClient, usePublicClient } from "wagmi";
 import { useBridgeStore } from "@/lib/store/bridge-store";
 import { Button } from "../buttons/button";
+import { sdk } from '@farcaster/frame-sdk'
 
 const SwapUI: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -105,6 +105,15 @@ const SwapUI: React.FC = () => {
       console.error("Failed to read clipboard:", err);
     }
   };
+
+  const handleShareApp = async () => {
+    await sdk.actions.composeCast({
+      text: "I just bought RWAs using Ticker by @0xsarthak and @megabyte. \n \n Powered by @bungee.",
+      embeds: [
+        "https://ticker.megabyte0x.xyz"
+      ]
+    })
+  }
 
   useEffect(() => {
     if (fromToken && toToken && fromAmount) {
@@ -277,11 +286,10 @@ const SwapUI: React.FC = () => {
                           value={recipientAddress}
                           onChange={(e) => handleAddressChange(e.target.value)}
                           placeholder="Enter recipient address"
-                          className={`w-full bg-[#262830] border ${
-                            isValidAddress
-                              ? "border-[#2e2f34]"
-                              : "border-red-500"
-                          } rounded-lg px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/30 transition-all duration-200 pr-[80px]`}
+                          className={`w-full bg-[#262830] border ${isValidAddress
+                            ? "border-[#2e2f34]"
+                            : "border-red-500"
+                            } rounded-lg px-3 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/30 focus:border-blue-500/30 transition-all duration-200 pr-[80px]`}
                         />
                         <button
                           onClick={handlePaste}
@@ -326,11 +334,18 @@ const SwapUI: React.FC = () => {
             className="py-4"
           >
             {bridgeStatus === "completed" && requestHash ? (
-              <Button className="w-full">
-                <TextAnimate animation="fadeIn" by="text">
-                  Transaction Successfull
-                </TextAnimate>
-              </Button>
+              (
+                <div className="flex flex-col gap-2">
+                  <Button className="w-full">
+                    <TextAnimate animation="fadeIn" by="text">
+                      Transaction Successfull
+                    </TextAnimate>
+                  </Button>
+                  <Button className="w-full" onClick={handleShareApp}>
+                    Share App
+                  </Button>
+                </div>
+              )
             ) : (
               <button
                 disabled={
@@ -341,25 +356,24 @@ const SwapUI: React.FC = () => {
                   isBridging
                 }
                 onClick={handleSwapClick}
-                className={`w-full text-base font-medium py-3 cursor-pointer hover:scale-95 duration-300 rounded-xl transition-all bg-[#1e2024] ${
-                  fromAmount && fromToken && toToken && !hasInsufficientBalance && !isBridging
-                    ? "text-[#ffd698]"
-                    : "text-[#9ca3af]"
-                } disabled:opacity-50`}
+                className={`w-full text-base font-medium py-3 cursor-pointer hover:scale-95 duration-300 rounded-xl transition-all bg-[#1e2024] ${fromAmount && fromToken && toToken && !hasInsufficientBalance && !isBridging
+                  ? "text-[#ffd698]"
+                  : "text-[#9ca3af]"
+                  } disabled:opacity-50`}
               >
                 {!fromAmount
                   ? "Enter an Amount"
                   : hasInsufficientBalance
-                  ? "Insufficient Balance"
-                  : isBridging
-                  ? bridgeStatus === "approving"
-                    ? "Approving..."
-                    : bridgeStatus === "signing"
-                    ? "Signing..."
-                    : bridgeStatus === "submitting"
-                    ? "Submitting..."
-                    : "Processing..."
-                  : "Swap"}
+                    ? "Insufficient Balance"
+                    : isBridging
+                      ? bridgeStatus === "approving"
+                        ? "Approving..."
+                        : bridgeStatus === "signing"
+                          ? "Signing..."
+                          : bridgeStatus === "submitting"
+                            ? "Submitting..."
+                            : "Processing..."
+                      : "Swap"}
               </button>
             )}
             {bridgeError && (
