@@ -105,7 +105,7 @@ export const TokenDropdown = memo<TokenDropdownProps>(
 
           <Tabs defaultValue={defaultTab} className="w-full flex flex-col h-[calc(400px-100px)]">
             <TabsList className="w-full flex p-2 bg-[#24262a] border-b border-[#2e2f34]">
-              <TabsTrigger value="featured" className="flex-1 hover:scale-95 transition-all duration-200 cursor-pointer">Featured</TabsTrigger>
+              <TabsTrigger value="featured" className="flex-1 hover:scale-95 transition-all duration-200 cursor-pointer">Featured RWAs</TabsTrigger>
               <TabsTrigger value="all" className="flex-1 hover:scale-95 transition-all duration-200 cursor-pointer">All</TabsTrigger>
             </TabsList>
             <TabsContent value="featured" className="flex-1 overflow-y-auto">
