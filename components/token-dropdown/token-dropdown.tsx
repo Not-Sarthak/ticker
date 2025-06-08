@@ -48,12 +48,18 @@ export const TokenDropdown = memo<TokenDropdownProps>(
     defaultTab = "all"
   }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const { fetchChains, reset } = useTokenStore();
+    const { fetchChains, reset, selectedChain, fetchTokens } = useTokenStore();
     const { address } = useAccount();
 
     useEffect(() => {
       fetchChains();
     }, [fetchChains]);
+
+    useEffect(() => {
+      if (isOpen && selectedChain && address) {
+        fetchTokens(selectedChain.chainId, address);
+      }
+    }, [isOpen, selectedChain, address, fetchTokens]);
 
     useDebouncedSearch({ userAddress: address });
 

@@ -341,7 +341,11 @@ const SwapUI: React.FC = () => {
                   isBridging
                 }
                 onClick={handleSwapClick}
-                className="w-full text-base font-medium py-3 cursor-pointer hover:scale-95 duration-300 rounded-xl transition-all bg-[#1e2024] text-[#9ca3af] disabled:opacity-50"
+                className={`w-full text-base font-medium py-3 cursor-pointer hover:scale-95 duration-300 rounded-xl transition-all bg-[#1e2024] ${
+                  fromAmount && fromToken && toToken && !hasInsufficientBalance && !isBridging
+                    ? "text-[#ffd698]"
+                    : "text-[#9ca3af]"
+                } disabled:opacity-50`}
               >
                 {!fromAmount
                   ? "Enter an Amount"

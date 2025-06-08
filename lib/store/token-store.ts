@@ -50,13 +50,21 @@ export const useTokenStore = create<TokenStore>((set, get) => ({
   setSearchQuery: (query) => set({ searchQuery: query }),
   setShowAllChains: (show) => set({ showAllChains: show }),
   
-  // Async actions
   fetchChains: async () => {
     try {
       const chains = await tokenApi.fetchChains();
-      set({ chains });
       
-      const ethereum = chains.find((chain: Chain) => chain.chainId === 1);
+      const sortedChains = chains.sort((a, b) => {
+        if (a.chainId === 1) return -1;
+        if (b.chainId === 1) return 1;
+        if (a.chainId === 8453) return -1;
+        if (b.chainId === 8453) return 1;
+        return 0;
+      });
+
+      set({ chains: sortedChains });
+      
+      const ethereum = sortedChains.find((chain: Chain) => chain.chainId === 1);
       if (ethereum) {
         set({ selectedChain: ethereum });
         get().fetchTokens(ethereum.chainId);
@@ -72,7 +80,6 @@ export const useTokenStore = create<TokenStore>((set, get) => ({
       if (userAddress) {
         const result = await getUserTokenList(userAddress, [chainId.toString()]);
         if (result && result[chainId] && Array.isArray(result[chainId])) {
-          // Sort tokens by balanceInUsd in descending order
           const sortedTokens = [...result[chainId]].sort((a, b) => {
             const balanceA = a.balanceInUsd || 0;
             const balanceB = b.balanceInUsd || 0;
@@ -82,12 +89,11 @@ export const useTokenStore = create<TokenStore>((set, get) => ({
           return;
         }
       }
-      // Fallback to regular token list if no user address or getUserTokenList fails
       const tokens = await tokenApi.fetchTokens(chainId);
       set({ tokens });
     } catch (error) {
       console.error('Error fetching tokens:', error);
-      set({ tokens: [] }); // Set empty array on error
+      set({ tokens: [] });
     } finally {
       set({ loading: false });
     }

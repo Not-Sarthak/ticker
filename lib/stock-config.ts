@@ -131,6 +131,56 @@ export const stockTokens = [
   },
   {
     id: 15,
+    chainId: 8453,
+    tokenAddress: "0xDEc933e2392AD908263e70A386fbF34e703Ffe8F",
+    name: "Wrapped bCOIN",
+    symbol: "WBCOIN",
+    decimals: 18,
+    logoURI:
+      "https://assets.coingecko.com/coins/images/54428/large/bTSLA_200p.png?1740041458",
+  },
+  {
+    id: 16,
+    chainId: 100,
+    tokenAddress: "0xDEc933e2392AD908263e70A386fbF34e703Ffe8F",
+    name: "Wrapped bCOIN",
+    symbol: "WBCOIN",
+    decimals: 18,
+    logoURI:
+      "https://assets.coingecko.com/coins/images/54428/large/bTSLA_200p.png?1740041458",
+  },
+  {
+    id: 17,
+    chainId: 1,
+    tokenAddress: "0xDEc933e2392AD908263e70A386fbF34e703Ffe8F",
+    name: "Wrapped bCOIN",
+    symbol: "WBCOIN",
+    decimals: 18,
+    logoURI:
+      "https://assets.coingecko.com/coins/images/54428/large/bTSLA_200p.png?1740041458",
+  },
+  {
+    id: 18,
+    chainId: 137,
+    tokenAddress: "0xDEc933e2392AD908263e70A386fbF34e703Ffe8F",
+    name: "Wrapped bCOIN",
+    symbol: "WBCOIN",
+    decimals: 18,
+    logoURI:
+      "https://assets.coingecko.com/coins/images/54428/large/bTSLA_200p.png?1740041458",
+  },
+  {
+    id: 19,
+    chainId: 43114,
+    tokenAddress: "0xDEc933e2392AD908263e70A386fbF34e703Ffe8F",
+    name: "Wrapped bCOIN",
+    symbol: "WBCOIN",
+    decimals: 18,
+    logoURI:
+      "https://assets.coingecko.com/coins/images/54428/large/bTSLA_200p.png?1740041458",
+  },
+  {
+    id: 20,
     chainId: 43114,
     tokenAddress: "0x1f82284c1658ad71c576f7230e6c2dee7901c1fa",
     name: "Wrapped bTSLA",
