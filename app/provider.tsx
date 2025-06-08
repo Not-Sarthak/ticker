@@ -13,6 +13,7 @@ const config = createConfig({
     [base.id]: http(),
   },
 });
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <PrivyProvider appId={process.env.NEXT_PUBLIC_PRIVY_APP_ID as string}>

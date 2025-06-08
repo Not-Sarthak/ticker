@@ -363,7 +363,7 @@ const SwapUI: React.FC = () => {
                     }}
                   >
                     View Transaction
-                  </Button>
+                  </Button> 
                 )}
                 <Button className="w-full cursor-pointer" onClick={handleShareApp}>
                   Share App
