@@ -16,6 +16,7 @@ import { useBridgeStore } from "@/lib/store/bridge-store";
 import { Button } from "../buttons/button";
 import { sdk } from '@farcaster/frame-sdk'
 import { getTxHash } from '@/lib/api/api';
+import { createClient } from '@/lib/supabase/client';
 import { useTokenPrice } from "@/lib/hooks/use-token-price";
 
 const SwapUI: React.FC = () => {
@@ -131,8 +132,19 @@ const SwapUI: React.FC = () => {
   useEffect(() => {
     if (requestHash) {
       const fetchTxHash = async () => {
-        const hash = await getTxHash(requestHash);
-        setTxHash(hash);
+        const txHash = await getTxHash(requestHash);
+        if (txHash) {
+          setTxHash(txHash);
+          const supabase = createClient();
+          const { error } = await supabase
+            .from('tx_hash')
+            .update({ tx_hash: txHash })
+            .eq('request_hash', requestHash);
+
+          if (error) {
+            console.error('Error updating tx_hash:', error);
+          }
+        }
       };
       fetchTxHash();
     }
@@ -381,7 +393,7 @@ const SwapUI: React.FC = () => {
                     }}
                   >
                     View Transaction
-                  </Button> 
+                  </Button>
                 )}
                 <Button className="w-full cursor-pointer" onClick={handleShareApp}>
                   Share App

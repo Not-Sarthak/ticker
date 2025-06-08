@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { ERC20_ABI } from '../utils';
 import { submitRequest } from '../api/api';
 import { type WalletClient, type PublicClient } from 'viem';
+import { createClient } from '@/lib/supabase/client';
 
 interface BridgeState {
   isApproving: boolean;
@@ -99,7 +100,14 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
           });
 
           if (result?.requestHash) {
-            // TODO: use getTxHash to get the tx hash and the explorer link `https://www.socketscan.io/tx/${txHash}`
+            const supabase = createClient();
+            await supabase
+              .from('tx_hash')
+              .insert({
+                user_address: walletClient.account.address,
+                request_hash: result.requestHash
+              });
+
             set({ requestHash: result.requestHash, bridgeStatus: 'completed' });
           }
         } catch (submitError: any) {
@@ -127,9 +135,18 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
         });
 
         await publicClient.waitForTransactionReceipt({ hash });
+        const requestHash = quoteData.autoRoute.requestHash;
+
+        const supabase = createClient();
+        await supabase
+          .from('tx_hash')
+          .insert({
+            user_address: walletClient.account.address,
+            request_hash: requestHash
+          });
 
         set({
-          requestHash: quoteData.autoRoute.requestHash,
+          requestHash: requestHash,
           bridgeStatus: 'completed'
         });
       }
