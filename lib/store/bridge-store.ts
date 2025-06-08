@@ -34,12 +34,12 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
   handleBridge: async (quoteData, walletClient, publicClient) => {
     try {
       if (!walletClient.account) throw new Error('No account connected');
-      
+
       set({ isBridging: true, bridgeStatus: 'approving', error: null });
 
       if (quoteData.autoRoute.approvalData) {
         const { approvalData } = quoteData.autoRoute;
-        
+
 
         const currentAllowance = await publicClient.readContract({
           address: approvalData.tokenAddress as `0x${string}`,
@@ -99,24 +99,25 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
           });
 
           if (result?.requestHash) {
+            // TODO: use getTxHash to get the tx hash and the explorer link `https://www.socketscan.io/tx/${txHash}`
             set({ requestHash: result.requestHash, bridgeStatus: 'completed' });
           }
         } catch (submitError: any) {
           if (submitError.message?.includes('Request hash already exists')) {
-            set({ 
-              requestHash: quoteData.autoRoute.requestHash, 
-              bridgeStatus: 'completed' 
+            set({
+              requestHash: quoteData.autoRoute.requestHash,
+              bridgeStatus: 'completed'
             });
           } else {
             throw submitError;
           }
         }
-      } 
+      }
       else if (quoteData.autoRoute.txData) {
         const { txData } = quoteData.autoRoute;
-        
+
         set({ bridgeStatus: 'submitting' });
-        
+
         const hash = await walletClient.sendTransaction({
           chain: null,
           account: walletClient.account,
@@ -126,17 +127,17 @@ export const useBridgeStore = create<BridgeState>((set, get) => ({
         });
 
         await publicClient.waitForTransactionReceipt({ hash });
-        
-        set({ 
-          requestHash: quoteData.autoRoute.requestHash, 
-          bridgeStatus: 'completed' 
+
+        set({
+          requestHash: quoteData.autoRoute.requestHash,
+          bridgeStatus: 'completed'
         });
       }
 
     } catch (error: any) {
-      set({ 
-        error: error.message || 'Failed to bridge tokens', 
-        bridgeStatus: 'error' 
+      set({
+        error: error.message || 'Failed to bridge tokens',
+        bridgeStatus: 'error'
       });
       console.error('Bridge error:', error);
     } finally {

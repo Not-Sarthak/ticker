@@ -1,0 +1,61 @@
+{
+    "success": true,
+    "statusCode": 200,
+    "result": [
+        {
+            "hash": "0x81d3ab91773de5524ccdfce923c634574593279f000c7c43c0f958ce643cf944",
+            "originData": {
+                "input": [
+                    {
+                        "token": {
+                            "chainId": 42161,
+                            "address": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+                            "name": "USD Coin",
+                            "symbol": "USDC",
+                            "decimals": 6,
+                            "logoURI": "https://assets.coingecko.com/coins/images/6319/large/usdc.png?1696506694",
+                            "icon": "https://assets.coingecko.com/coins/images/6319/large/usdc.png?1696506694"
+                        },
+                        "amount": "10000000",
+                        "priceInUsd": 1,
+                        "valueInUsd": 10
+                    }
+                ],
+                "originChainId": 59144,
+                "txHash": "0xbd7c134d35b6582ddc0a3ae1c8b27db03cd785f4c8e3318eb3566aebcf850784",
+                "status": "COMPLETED",
+                "userAddress": "0xBbe2c47dD59Ebc27204eB3437605b8c86F054a69",
+                "timestamp": 1714550400
+            },
+            "destinationData": {
+                "output": [
+                    {
+                        "token": {
+                            "chainId": 42161,
+                            "address": "0xaf88d065e77c8cC2239327C5EDb3A432268e5831",
+                            "name": "USD Coin",
+                            "symbol": "USDC",
+                            "decimals": 6,
+                            "logoURI": "https://assets.coingecko.com/coins/images/6319/large/usdc.png?1696506694",
+                            "icon": "https://assets.coingecko.com/coins/images/6319/large/usdc.png?1696506694"
+                        },
+                        "amount": "9834231",
+                        "priceInUsd": 1,
+                        "valueInUsd": 9.834231,
+                        "minAmountOut": "9834231"
+                    }
+                ],
+                "destinationChainId": 42161,
+                "txHash": "0xd2aef7a3427406b77d359ef27fa53bab86c544d1121ea2f6b4003599ae4a542e",
+                "status": "COMPLETED",
+                "receiverAddress": "0x5291dcBd487880F591eA2B2216098ef5B7e18d93",
+                "timestamp": 1714550400
+            },
+            "routeDetails": {
+                "name": "bungee-protocol",
+                "logoURI": "https://www.socketscan.io/new-bungee-icon.svg"
+            },
+            "bungeeStatusCode": 0
+        }
+    ]
+}

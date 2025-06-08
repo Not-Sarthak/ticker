@@ -6,6 +6,10 @@ import {
   BridgeResult,
   SubmitRequest,
   SubmitRequestResponse,
+  SubmitRequestResult,
+  SupportedChainsResponse,
+  TransactionHistoryResponse,
+  TransactionHistoryItem,
 } from "../types";
 import {
   createPublicClient,
@@ -19,33 +23,6 @@ import { ERC20_ABI } from "../utils";
 import { PUBLIC_RPC_URLS } from "../rpc";
 
 const BASE_URL = "https://public-backend.bungee.exchange";
-
-interface ChainCurrency {
-  address: string;
-  name: string;
-  symbol: string;
-  decimals: number;
-  icon?: string;
-  minNativeCurrencyForGas: string;
-}
-
-interface SupportedChain {
-  chainId: number;
-  name: string;
-  icon: string;
-  currency: ChainCurrency;
-  explorers: string[];
-  sendingEnabled: boolean;
-  receivingEnabled: boolean;
-  isAutoEnabled: boolean;
-  isManualEnabled: boolean;
-}
-
-interface SupportedChainsResponse {
-  success: boolean;
-  statusCode: number;
-  result: SupportedChain[];
-}
 
 let supportedChainsCache: Record<string, Chain> | null = null;
 let lastCacheFetch: number = 0;
@@ -157,7 +134,7 @@ async function getQuote(input: QuoteParams): Promise<BridgeResult | null> {
   }
 }
 
-async function submitRequest(quote: SubmitRequest) {
+async function submitRequest(quote: SubmitRequest): Promise<SubmitRequestResult | null> {
   const data = {
     request: quote.request,
     userSignature: quote.userSignature,
@@ -183,6 +160,24 @@ async function submitRequest(quote: SubmitRequest) {
     }
 
     return data.result;
+  } catch (error) {
+    console.error(error);
+    return null;
+  }
+}
+
+async function getTxHash(requestHash: string): Promise<string | null> {
+  const url = `${BASE_URL}/api/v1/bungee/status?requestHash=${requestHash}`;
+
+  try {
+    const response = await fetch(url);
+    const data: TransactionHistoryResponse = await response.json();
+
+    if (!data.success) {
+      throw new Error(data.message || "Failed to fetch transaction status");
+    }
+
+    return data.result[0].hash;
   } catch (error) {
     console.error(error);
     return null;
@@ -236,7 +231,7 @@ async function getBalance(
     const isNativeToken =
       tokenAddress === "0x0000000000000000000000000000000000000000" ||
       tokenAddress.toLowerCase() ===
-        "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
+      "0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee";
 
     if (isNativeToken) {
       balance = await retryOperation(() =>

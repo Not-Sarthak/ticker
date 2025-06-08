@@ -1,3 +1,5 @@
+import { Chain, Token } from "@/types";
+
 export interface TokenData {
     chainId: number;
     address: string;
@@ -206,5 +208,90 @@ export interface SubmitRequestResponse {
     success: boolean;
     statusCode: number;
     result: SubmitRequestResult;
+    message?: string;
+}
+
+export interface ChainCurrency {
+    address: string;
+    name: string;
+    symbol: string;
+    decimals: number;
+    icon?: string;
+    minNativeCurrencyForGas: string;
+}
+
+export interface SupportedChain {
+    chainId: number;
+    name: string;
+    icon: string;
+    currency: ChainCurrency;
+    explorers: string[];
+    sendingEnabled: boolean;
+    receivingEnabled: boolean;
+    isAutoEnabled: boolean;
+    isManualEnabled: boolean;
+}
+
+export interface SupportedChainsResponse {
+    success: boolean;
+    statusCode: number;
+    result: SupportedChain[];
+}
+
+export interface ChainResponse {
+    success: boolean;
+    result: Chain[];
+}
+
+export interface TokenResponse {
+    success: boolean;
+    result: Record<number, Token[]>;
+}
+
+export interface SearchResponse {
+    success: boolean;
+    result: {
+        tokens: Record<string, Token[]>;
+    };
+}
+
+export interface TransactionOutput {
+    token: BridgeToken;
+    amount: string;
+    priceInUsd: number;
+    valueInUsd: number;
+    minAmountOut: string;
+}
+
+export interface TransactionOriginData {
+    input: BridgeInput[];
+    originChainId: number;
+    txHash: string;
+    status: string;
+    userAddress: string;
+    timestamp: number;
+}
+
+export interface TransactionDestinationData {
+    output: TransactionOutput[];
+    destinationChainId: number;
+    txHash: string;
+    status: string;
+    receiverAddress: string;
+    timestamp: number;
+}
+
+export interface TransactionHistoryItem {
+    hash: string;
+    originData: TransactionOriginData;
+    destinationData: TransactionDestinationData;
+    routeDetails: RouteDetails;
+    bungeeStatusCode: number;
+}
+
+export interface TransactionHistoryResponse {
+    success: boolean;
+    statusCode: number;
+    result: TransactionHistoryItem[];
     message?: string;
 }
