@@ -109,8 +109,9 @@ const SwapUI: React.FC = () => {
   };
 
   const handleShareApp = async () => {
+    const tokenSymbol = toToken?.symbol;
     await sdk.actions.composeCast({
-      text: "just bridged real world assets on ticker",
+      text: `Just got some $${tokenSymbol}, a Real World Asset, using Ticker⚡️ \n \n By @0xsarthak & @megabyte \n \n Powered by @bungee`,
       embeds: [
         "https://ticker.megabyte0x.xyz"
       ]
@@ -354,11 +355,11 @@ const SwapUI: React.FC = () => {
                     </TextAnimate>
                   </Button>
                 ) : (
-                  <Button 
+                  <Button
                     className="w-full cursor-pointer"
                     onClick={() => {
-                      console.log("txHash", txHash);
-                      sdk.actions.openUrl(`https://www.socketscan.io/tx/${txHash}`);
+                      const url = `https://www.socketscan.io/tx/${txHash}`;
+                      sdk.actions.openUrl(url);
                     }}
                   >
                     View Transaction
