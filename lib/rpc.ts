@@ -9,7 +9,7 @@ export const PUBLIC_RPC_URLS: Record<number, string[]> = {
     "https://bsc-dataseed2.binance.org",
     "https://bsc-dataseed3.binance.org",
   ],
-  100: [],
+  100: ["wss://gnosis-rpc.publicnode.com"],
   130: [],
 
   137: [

@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Token } from '@/types';
-import { getBalance } from '@/lib/api/api';
+import { getBalance, getUserTokenList } from '@/lib/api/api';
 import { useAccount } from 'wagmi';
+import { stockTokens } from '@/lib/stock-config';
 
 interface BalanceCache {
   [key: string]: {
@@ -28,6 +29,34 @@ export function useTokenBalance(token: Token | null) {
         return;
       }
 
+      // Check if it's an RWA token
+      const isRWA = stockTokens.some(
+        (t) => t.tokenAddress.toLowerCase() === (token.address || (token as any).tokenAddress)?.toLowerCase()
+      );
+
+      if (isRWA) {
+        // Use getUserTokenList for RWA tokens
+        try {
+          const result = await getUserTokenList(userAddress, [token.chainId.toString()]);
+          if (result && result[token.chainId]) {
+            const tokenData = result[token.chainId].find(
+              (t) => t.address.toLowerCase() === (token.address || (token as any).tokenAddress)?.toLowerCase()
+            );
+            if (tokenData) {
+              setBalance({
+                raw: tokenData.balance,
+                formatted: (parseFloat(tokenData.balance) / Math.pow(10, token.decimals)).toString()
+              });
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching RWA token balance:', error);
+          setBalance(null);
+        }
+        return;
+      }
+
+      // For non-RWA tokens, use the existing RPC method
       const cacheKey = `${userAddress}-${token.chainId}-${token.address}`;
       const cachedData = balanceCache[cacheKey];
       
