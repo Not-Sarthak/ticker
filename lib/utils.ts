@@ -17,7 +17,7 @@ export function formatTokenBalance(balance: string | number, decimals: number = 
   if (numBalance === 0) return '0';
   if (numBalance < 0.0001) return '< 0.0001';
   
-  return numBalance.toFixed(decimals);
+  return numBalance.toFixed(decimals); 
 }
 
 export function getTokenDisplayName(symbol: string, name: string): { primary: string; secondary: string } {
