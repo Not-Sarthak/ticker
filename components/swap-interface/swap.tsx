@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronDown, Wallet } from "lucide-react";
 import { TokenDropdown } from "../token-dropdown";
@@ -19,9 +19,26 @@ import { getTxHash } from '@/lib/api/api';
 import { createClient } from '@/lib/supabase/client';
 import { useTokenPrice } from "@/lib/hooks/use-token-price";
 
+const useDebounce = (value: string, delay: number) => {
+  const [debouncedValue, setDebouncedValue] = useState(value);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedValue(value);
+    }, delay);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [value, delay]);
+
+  return debouncedValue;
+};
+
 const SwapUI: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
   const [txHash, setTxHash] = useState<string | null>(null);
+  const [localFromAmount, setLocalFromAmount] = useState("");
   const { address, connector } = useAccount();
   const { data: walletClient } = useWalletClient();
   const publicClient = usePublicClient();
@@ -44,6 +61,7 @@ const SwapUI: React.FC = () => {
     setUserAddress,
     fetchQuote,
     quoteData,
+    quoteLoading,
   } = useSwapStore();
 
   const {
@@ -57,6 +75,9 @@ const SwapUI: React.FC = () => {
   const fromTokenPrice = useTokenPrice(fromToken);
   const toTokenPrice = useTokenPrice(toToken);
 
+  // Debounce the local fromAmount
+  const debouncedFromAmount = useDebounce(localFromAmount, 500);
+
   useEffect(() => {
     if (address) {
       setUserAddress(address);
@@ -69,40 +90,67 @@ const SwapUI: React.FC = () => {
     useTokenBalance(toToken);
 
   const handleFromAmountChange = (value: string) => {
-    setFromAmount(value);
-    setToAmount("");
+    setLocalFromAmount(value);
   };
 
+  // Update global fromAmount when debounced value changes
   useEffect(() => {
-    if (quoteData?.output) {
+    setFromAmount(debouncedFromAmount);
+  }, [debouncedFromAmount, setFromAmount]);
+
+  // Reset amounts when tokens change
+  useEffect(() => {
+    setLocalFromAmount("");
+    setFromAmount("");
+    setToAmount("");
+  }, [fromToken, toToken, setFromAmount, setToAmount]);
+
+  // Update toAmount when quote changes
+  useEffect(() => {
+    if (quoteData?.output && !quoteLoading) {
       const outputAmount = (
         parseFloat(quoteData.output.amount) /
         Math.pow(10, quoteData.output.token.decimals)
       ).toString();
       setToAmount(outputAmount);
     }
-  }, [quoteData]);
+  }, [quoteData, quoteLoading, setToAmount]);
 
-  const handleMaxClick = () => {
-    if (fromBalance) {
-      setFromAmount(parseFloat(fromBalance.formatted).toString());
+  useEffect(() => {
+    if (fromToken && toToken && debouncedFromAmount && !quoteLoading) {
+      fetchQuote();
     }
-  };
+  }, [fromToken, toToken, debouncedFromAmount, recipientAddress, fetchQuote, quoteLoading]);
 
-  const handleSwapTokens = () => {
-    const tempToken = fromToken;
-    setFromToken(toToken);
-    setToToken(tempToken);
+  const handleMaxClick = useCallback(() => {
+    if (fromBalance) {
+      const maxAmount = parseFloat(fromBalance.formatted).toString();
+      setLocalFromAmount(maxAmount);
+      setFromAmount(maxAmount);
+    }
+  }, [fromBalance, setFromAmount]);
 
-    const tempAmount = fromAmount;
-    setFromAmount(toAmount);
-    setToAmount(tempAmount);
-  };
+  const handleSwapTokens = useCallback(() => {
+    if (quoteLoading) return;
 
-  const handleAddressChange = (value: string) => {
+    // Batch the state updates for better performance
+    const tempFromToken = fromToken;
+    const tempToToken = toToken;
+
+    // Reset amounts first to prevent any race conditions
+    setLocalFromAmount("");
+    setFromAmount("");
+    setToAmount("");
+
+    // Then swap the tokens
+    setFromToken(tempToToken);
+    setToToken(tempFromToken);
+  }, [fromToken, toToken, quoteLoading, setFromToken, setToToken, setFromAmount, setToAmount]);
+
+  const handleAddressChange = useCallback((value: string) => {
     setRecipientAddress(value);
     setIsValidAddress(value === "" || isValidEvmAddress(value));
-  };
+  }, [setRecipientAddress, setIsValidAddress]);
 
   const handlePaste = async () => {
     try {
@@ -122,12 +170,6 @@ const SwapUI: React.FC = () => {
       ]
     })
   }
-
-  useEffect(() => {
-    if (fromToken && toToken && fromAmount) {
-      fetchQuote();
-    }
-  }, [fromToken, toToken, fromAmount, recipientAddress]);
 
   useEffect(() => {
     if (requestHash) {
@@ -213,16 +255,17 @@ const SwapUI: React.FC = () => {
                     <motion.input
                       whileFocus={{ scale: 1.01 }}
                       type="number"
-                      value={fromAmount}
+                      value={localFromAmount}
                       onChange={(e) => handleFromAmountChange(e.target.value)}
                       className="bg-transparent outline-none text-white text-2xl font-medium w-full placeholder-gray-400 [-moz-appearance:textfield] [&::-webkit-inner-spin-button]:m-0 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:m-0 [&::-webkit-outer-spin-button]:appearance-none font-roboto-mono"
                       style={{ fontFamily: "Roboto Mono, monospace" }}
                       placeholder="0.00"
                       min="0"
+                      disabled={quoteLoading}
                     />
-                    {fromTokenPrice && fromAmount && (
+                    {fromTokenPrice && localFromAmount && (
                       <span className="text-xs text-white mt-1">
-                        ${(fromTokenPrice * parseFloat(fromAmount || "0")).toFixed(2)}
+                        ${(fromTokenPrice * parseFloat(localFromAmount || "0")).toFixed(2)}
                       </span>
                     )}
                   </div>
@@ -402,19 +445,19 @@ const SwapUI: React.FC = () => {
             ) : (
               <button
                 disabled={
-                  !fromAmount ||
+                  !localFromAmount ||
                   !fromToken ||
                   !toToken ||
                   hasInsufficientBalance ||
                   isBridging
                 }
                 onClick={handleSwapClick}
-                className={`w-full text-base font-medium py-3 cursor-pointer hover:scale-95 duration-300 rounded-xl transition-all bg-[#1e2024] ${fromAmount && fromToken && toToken && !hasInsufficientBalance && !isBridging
+                className={`w-full text-base font-medium py-3 cursor-pointer hover:scale-95 duration-300 rounded-xl transition-all bg-[#1e2024] ${localFromAmount && fromToken && toToken && !hasInsufficientBalance && !isBridging
                   ? "text-[#ffd698]"
                   : "text-[#9ca3af]"
                   } disabled:opacity-50`}
               >
-                {!fromAmount
+                {!localFromAmount
                   ? "Enter an Amount"
                   : hasInsufficientBalance
                     ? "Insufficient Balance"
