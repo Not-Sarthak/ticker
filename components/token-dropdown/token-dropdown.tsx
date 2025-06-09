@@ -16,6 +16,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuContent,
 } from "./dropdown";
+import { getUserTokenList } from "@/lib/api/api";
 
 interface TokenDropdownProps {
   selectedToken: Token | null;
@@ -50,6 +51,7 @@ export const TokenDropdown = memo<TokenDropdownProps>(
     const [isOpen, setIsOpen] = useState(false);
     const { fetchChains, reset, selectedChain, fetchTokens } = useTokenStore();
     const { address } = useAccount();
+    const [featuredTokens, setFeaturedTokens] = useState<Token[]>([]);
 
     useEffect(() => {
       fetchChains();
@@ -60,6 +62,49 @@ export const TokenDropdown = memo<TokenDropdownProps>(
         fetchTokens(selectedChain.chainId, address);
       }
     }, [isOpen, selectedChain, address, fetchTokens]);
+
+    useEffect(() => {
+      const fetchFeaturedTokenBalances = async () => {
+        if (!address) return;
+        
+        const chainIds = Array.from(new Set(stockTokens.map(token => token.chainId.toString())));
+        
+        try {
+          const result = await getUserTokenList(address, chainIds);
+          if (!result) return;
+
+          const tokensWithBalances = stockTokens.map(token => {
+            const chainTokens = result[token.chainId];
+            const tokenWithBalance = chainTokens?.find(t => t.address.toLowerCase() === token.tokenAddress.toLowerCase());
+            
+            return {
+              ...token,
+              address: token.tokenAddress,
+              balance: tokenWithBalance?.balance || "0",
+              balanceInUsd: tokenWithBalance?.balanceInUsd || 0
+            };
+          });
+
+          const sortedTokens = tokensWithBalances.sort((a, b) => {
+            const aHasBalance = parseFloat(a.balance || "0") > 0;
+            const bHasBalance = parseFloat(b.balance || "0") > 0;
+            
+            if (aHasBalance && !bHasBalance) return -1;
+            if (!aHasBalance && bHasBalance) return 1;
+            
+            return (b.balanceInUsd || 0) - (a.balanceInUsd || 0);
+          });
+
+          setFeaturedTokens(sortedTokens);
+        } catch (error) {
+          console.error("Error fetching featured token balances:", error);
+        }
+      };
+
+      if (address && isOpen) {
+        fetchFeaturedTokenBalances();
+      }
+    }, [address, isOpen]);
 
     useDebouncedSearch({ userAddress: address });
 
@@ -111,10 +156,7 @@ export const TokenDropdown = memo<TokenDropdownProps>(
             <TabsContent value="featured" className="flex-1 overflow-y-auto">
               <TokenList 
                 onTokenSelect={handleTokenSelect} 
-                tokens={stockTokens.map(token => ({
-                  ...token,
-                  address: token.tokenAddress
-                }))} 
+                tokens={featuredTokens} 
               />
             </TabsContent>
             <TabsContent value="all" className="flex-1 overflow-y-auto">
