@@ -432,7 +432,11 @@ const SwapUI: React.FC = () => {
                     className="w-full cursor-pointer"
                     onClick={() => {
                       const url = `https://www.socketscan.io/tx/${txHash}`;
-                      sdk.actions.openUrl(url);
+                      if (sdk?.actions?.openUrl) {
+                        sdk.actions.openUrl(url);
+                      } else {
+                        window.open(url, '_blank', 'noopener,noreferrer');
+                      }
                     }}
                   >
                     View Transaction
