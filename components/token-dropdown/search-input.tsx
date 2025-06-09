@@ -1,7 +1,8 @@
 "use client";
 
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { useTokenStore } from '@/lib/store/token-store';
+import debounce from 'lodash/debounce';
 
 interface SearchInputProps {
   placeholder?: string;
@@ -12,10 +13,19 @@ export const SearchInput = memo<SearchInputProps>(({
   placeholder = "Example: USDC Optimism",
   className = ""
 }) => {
-  const { searchQuery, setSearchQuery } = useTokenStore();
+  const { searchQuery, setSearchQuery, searchTokens } = useTokenStore();
+
+  const debouncedSearch = useCallback(
+    debounce((query: string) => {
+      searchTokens(query);
+    }, 300),
+    [searchTokens]
+  );
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchQuery(e.target.value);
+    const query = e.target.value;
+    setSearchQuery(query);
+    debouncedSearch(query);
   };
 
   return (
@@ -41,5 +51,3 @@ export const SearchInput = memo<SearchInputProps>(({
     </div>
   );
 });
-
-SearchInput.displayName = 'SearchInput'; 

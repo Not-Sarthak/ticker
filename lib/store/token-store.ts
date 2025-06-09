@@ -108,6 +108,7 @@ export const useTokenStore = create<TokenStore>((set, get) => ({
     set({ loading: true });
     try {
       const results = await tokenApi.searchTokens(query, userAddress);
+      console.log(results);
       set({ searchResults: results });
     } catch (error) {
       console.error('Error searching tokens:', error);

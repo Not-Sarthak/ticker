@@ -8,8 +8,8 @@ const Nav = () => {
   return (
     <>
       {showTrafficAlert && (
-        <div className="fixed top-0 left-0 right-0 z-50 bg-[#1e2024] border-b border-[#2e2f34] p-3">
-          <div className="max-w-3xl mx-auto flex items-center justify-center">
+        <div className="fixed top-0 left-0 right-0 z-50 bg-[#1e2024] border-b border-[#2e2f34] md:p-3 p-1">
+          <div className="max-w-3xl mx-auto flex items-center justify-center text-center">
             <p className="text-[#ffd698] text-sm">
               High API Volume - We're working with providers to increase capacity. Thank you for your patience!
             </p>
