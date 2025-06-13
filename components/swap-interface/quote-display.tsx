@@ -1,51 +1,12 @@
 import { useSwapStore } from "@/lib/store/swap-store";
 import { Shimmer } from "../ui/shimmer";
 
-interface Token {
-  chainId: number;
-  address: string;
-  name: string;
-  symbol: string;
-  decimals: number;
-  logoURI: string;
-  icon: string;
-}
-
-interface QuoteOutput {
-  token: Token;
-  amount: string;
-  priceInUsd: number;
-  valueInUsd: number;
-}
-
-interface QuoteInput {
-  token: Token;
-  amount: string;
-  priceInUsd: number;
-  valueInUsd: number;
-}
-
-interface AutoRoute {
-  output: QuoteOutput;
-}
-
-interface QuoteResult {
-  input: QuoteInput;
-  autoRoute: AutoRoute | null;
-}
-
-interface Quote {
-  success: boolean;
-  statusCode: number;
-  result: QuoteResult;
-}
-
 const NoRoutesMessage = () => (
   <div className="flex flex-col space-y-2 mt-4">
     <div className="flex items-center justify-between bg-[#1e2024] p-4 rounded-lg">
       <div className="flex items-center space-x-2">
         <span className="text-sm font-medium text-yellow-500">
-          No routes available for this swap
+          No routes available for this Swap
         </span>
       </div>
     </div>

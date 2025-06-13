@@ -18,22 +18,7 @@ import { sdk } from '@farcaster/frame-sdk'
 import { getTxHash } from '@/lib/api/api';
 import { createClient } from '@/lib/supabase/client';
 import { useTokenPrice } from "@/lib/hooks/use-token-price";
-
-const useDebounce = (value: string, delay: number) => {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-};
+import { useDebounce } from "@/lib/hooks/use-debounce";
 
 const SwapUI: React.FC = () => {
   const [isHovered, setIsHovered] = useState(false);
@@ -75,7 +60,6 @@ const SwapUI: React.FC = () => {
   const fromTokenPrice = useTokenPrice(fromToken);
   const toTokenPrice = useTokenPrice(toToken);
 
-  // Debounce the local fromAmount
   const debouncedFromAmount = useDebounce(localFromAmount, 500);
 
   useEffect(() => {
@@ -93,19 +77,16 @@ const SwapUI: React.FC = () => {
     setLocalFromAmount(value);
   };
 
-  // Update global fromAmount when debounced value changes
   useEffect(() => {
     setFromAmount(debouncedFromAmount);
   }, [debouncedFromAmount, setFromAmount]);
 
-  // Reset amounts when tokens change
   useEffect(() => {
     setLocalFromAmount("");
     setFromAmount("");
     setToAmount("");
   }, [fromToken, toToken, setFromAmount, setToAmount]);
 
-  // Update toAmount when quote changes
   useEffect(() => {
     if (quoteData?.output && !quoteLoading) {
       const outputAmount = (
@@ -133,16 +114,13 @@ const SwapUI: React.FC = () => {
   const handleSwapTokens = useCallback(() => {
     if (quoteLoading) return;
 
-    // Batch the state updates for better performance
     const tempFromToken = fromToken;
     const tempToToken = toToken;
 
-    // Reset amounts first to prevent any race conditions
     setLocalFromAmount("");
     setFromAmount("");
     setToAmount("");
 
-    // Then swap the tokens
     setFromToken(tempToToken);
     setToToken(tempFromToken);
   }, [fromToken, toToken, quoteLoading, setFromToken, setToToken, setFromAmount, setToAmount]);

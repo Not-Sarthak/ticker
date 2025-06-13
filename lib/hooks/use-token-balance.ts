@@ -13,7 +13,7 @@ interface BalanceCache {
 }
 
 const balanceCache: BalanceCache = {};
-const CACHE_TTL = 30000; // 30 seconds
+const CACHE_TTL = 30000;
 
 export function useTokenBalance(token: Token | null) {
   const { address: userAddress, isConnected } = useAccount();
@@ -29,13 +29,11 @@ export function useTokenBalance(token: Token | null) {
         return;
       }
 
-      // Check if it's an RWA token
       const isRWA = stockTokens.some(
         (t) => t.tokenAddress.toLowerCase() === (token.address || (token as any).tokenAddress)?.toLowerCase()
       );
 
       if (isRWA) {
-        // Use getUserTokenList for RWA tokens
         try {
           const result = await getUserTokenList(userAddress, [token.chainId.toString()]);
           if (result && result[token.chainId]) {
